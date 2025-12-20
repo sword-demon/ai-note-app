@@ -57,22 +57,22 @@
 
 ```bash
 # 开发服务器 (http://localhost:3000)
-npm run dev
+bun run dev
 
 # 生产构建
-npm run build
+bun run build
 
 # 启动生产服务器
-npm start
+bun start
 
 # 类型检查 (包含 MDX 编译、Next.js 类型生成和 TypeScript 检查)
-npm run types:check
+bun run types:check
 
 # Linting (使用 Biome)
-npm run lint
+bun run lint
 
 # 格式化代码 (使用 Biome)
-npm run format
+bun run format
 ```
 
 ## 工作流程
@@ -81,7 +81,7 @@ npm run format
 
 1. 在 `content/docs/` 创建 `.mdx` 文件
 2. 添加 frontmatter (title, description 等)
-3. 运行 `npm run dev` - postinstall hook 自动运行 `fumadocs-mdx`
+3. 运行 `bun run dev` - postinstall hook 自动运行 `fumadocs-mdx`
 4. 文档会自动出现在 `/docs` 路由
 
 ### 添加新博客文章
