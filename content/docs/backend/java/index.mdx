@@ -1,0 +1,466 @@
+---
+title: Java 开发
+description: Java 语言学习笔记，从 JavaSE 基础到 Spring Boot 企业级开发实践
+---
+
+# Java 开发
+
+Java 是全球最流行的编程语言之一，也是企业级应用开发的首选。从基础的 JavaSE 到强大的 Spring 生态系统，Java 为开发者提供了完整的技术栈和成熟的开发体系。
+
+## 为什么 Java 依然重要？
+
+### 企业级应用的基石
+
+在 2025 年，Java 依然是企业应用的首选语言：
+
+- **金融系统**：银行、证券、支付平台核心系统
+- **电商平台**：阿里、京东、美团等大型电商后台
+- **大数据生态**：Hadoop、Spark、Flink 等框架
+- **云服务**：微服务、容器化、云原生应用
+
+### 生态系统成熟
+
+Java 拥有最完善的开发生态：
+
+- **框架丰富**：Spring、MyBatis、Hibernate 等
+- **工具完善**：Maven、Gradle、IDEA 等
+- **社区活跃**：海量开源项目和学习资源
+- **规范统一**：JCP 标准确保技术稳定演进
+
+### 职业发展广阔
+
+Java 开发者的职业路径清晰：
+
+- **初级**：JavaSE 基础 + Web 开发
+- **中级**：Spring 全家桶 + 数据库 + 缓存
+- **高级**：分布式系统 + 微服务架构 + 性能优化
+- **架构师**：系统设计 + 技术选型 + 团队管理
+
+### 跨平台优势
+
+"一次编写，到处运行"（Write Once, Run Anywhere）：
+
+- JVM 屏蔽底层系统差异
+- 代码可在 Windows、Linux、Mac 等平台无缝运行
+- 容器化部署简单高效
+
+## 学习路径
+
+### 阶段一：JavaSE 基础（1-2 个月）
+
+**核心语法**
+- 变量、数据类型、运算符
+- 控制流程（if、for、while、switch）
+- 数组和字符串操作
+- 方法定义和调用
+
+**面向对象编程**
+- 类和对象
+- 封装、继承、多态
+- 接口和抽象类
+- 内部类和匿名类
+
+**常用 API**
+- 集合框架（List、Set、Map）
+- 异常处理机制
+- IO 流操作
+- 多线程基础
+
+**新特性**
+- Lambda 表达式
+- Stream API
+- Optional 类
+- 日期时间 API
+
+### 阶段二：JavaEE Web 开发（2-3 个月）
+
+**Web 基础**
+- HTTP 协议原理
+- Servlet 和 JSP
+- Cookie 和 Session
+- Filter 和 Listener
+
+**前端技术**
+- HTML/CSS/JavaScript 基础
+- AJAX 异步请求
+- Bootstrap/Vue.js（可选）
+
+**数据库**
+- SQL 语法（MySQL）
+- JDBC 编程
+- 连接池（Druid、HikariCP）
+- 事务管理
+
+### 阶段三：Spring 全家桶（3-4 个月）
+
+**Spring Framework**
+- IoC 控制反转
+- AOP 面向切面编程
+- Spring MVC 框架
+
+**Spring Boot**
+- 自动配置原理
+- Starter 依赖管理
+- RESTful API 开发
+- 配置文件管理
+
+**持久层框架**
+- MyBatis/MyBatis-Plus
+- JPA/Hibernate
+- 多数据源配置
+
+**Spring Cloud（微服务）**
+- 服务注册与发现（Nacos）
+- 负载均衡（Ribbon/LoadBalancer）
+- 服务调用（OpenFeign）
+- 网关路由（Gateway）
+- 配置中心
+- 链路追踪
+
+### 阶段四：进阶技术（持续学习）
+
+**中间件**
+- Redis 缓存
+- RabbitMQ/Kafka 消息队列
+- Elasticsearch 搜索引擎
+- MongoDB NoSQL 数据库
+
+**分布式**
+- 分布式事务（Seata）
+- 分布式锁
+- 限流降级（Sentinel）
+- 任务调度（XXL-JOB）
+
+**性能优化**
+- JVM 调优
+- SQL 优化
+- 接口性能优化
+- 并发编程
+
+## 本知识库内容结构
+
+### JavaSE 基础模块
+
+**数据结构与算法**
+- [数组操作](./javase/array) - 数组遍历、查找、排序等基础算法
+- [循环练习](./javase/for_exercise) - for/while 循环实战练习
+
+**语言特性**
+- [随机数生成](./javase/random) - Random 类和 Math.random() 使用
+
+**面试准备**
+- [常见面试题](./javase/interview) - JavaSE 高频面试题及答案解析
+
+### Spring Boot 实战模块
+
+**企业级功能**
+- [MQTT 集成](./springboot/mqtt) - 物联网消息通信协议集成方案
+- [日志 AOP Starter](./springboot/log_aop_starter) - 自定义 Spring Boot Starter 实现日志切面
+
+**开发小技巧**
+- [自定义 Banner](./banner) - 个性化 Spring Boot 启动横幅，让你的应用更有个性
+
+## 核心概念深入
+
+### 面向对象三大特性
+
+**封装（Encapsulation）**
+```java
+public class User {
+    private String name;  // 私有属性
+    private int age;
+
+    // 提供公共的 getter/setter 方法
+    public String getName() {
+        return name;
+    }
+
+    public void setAge(int age) {
+        if (age > 0 && age < 150) {  // 数据验证
+            this.age = age;
+        }
+    }
+}
+```
+
+**继承（Inheritance）**
+```java
+public class Animal {
+    protected String name;
+
+    public void eat() {
+        System.out.println("动物在吃东西");
+    }
+}
+
+public class Dog extends Animal {
+    @Override
+    public void eat() {
+        System.out.println("狗在吃骨头");  // 方法重写
+    }
+}
+```
+
+**多态（Polymorphism）**
+```java
+Animal animal = new Dog();  // 父类引用指向子类对象
+animal.eat();  // 调用的是 Dog 的 eat 方法
+```
+
+### 集合框架核心
+
+**List - 有序可重复**
+- `ArrayList`：动态数组，查询快、增删慢
+- `LinkedList`：双向链表，增删快、查询慢
+- 使用场景：ArrayList 适合查询多的场景，LinkedList 适合频繁插入删除
+
+**Set - 无序不重复**
+- `HashSet`：基于 HashMap，无序
+- `TreeSet`：基于红黑树，自动排序
+- `LinkedHashSet`：维护插入顺序
+
+**Map - 键值对存储**
+- `HashMap`：最常用，允许 null 键值
+- `ConcurrentHashMap`：线程安全
+- `TreeMap`：按键排序
+
+### Spring Boot 核心原理
+
+**自动配置（Auto Configuration）**
+```java
+@SpringBootApplication
+// 等同于 @Configuration + @EnableAutoConfiguration + @ComponentScan
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+Spring Boot 通过 `spring.factories` 文件自动加载配置类，实现"约定优于配置"。
+
+**依赖注入（Dependency Injection）**
+```java
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;  // 自动注入
+
+    public User findById(Long id) {
+        return userRepository.findById(id);
+    }
+}
+```
+
+### RESTful API 设计
+
+**HTTP 方法语义**
+- `GET`：查询资源
+- `POST`：创建资源
+- `PUT`：更新资源（完整更新）
+- `PATCH`：更新资源（部分更新）
+- `DELETE`：删除资源
+
+**示例代码**
+```java
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        return userService.findById(id);
+    }
+
+    @PostMapping
+    public User createUser(@RequestBody User user) {
+        return userService.save(user);
+    }
+
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User user) {
+        return userService.update(id, user);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.delete(id);
+    }
+}
+```
+
+## 最佳实践
+
+### 代码规范
+
+遵循《阿里巴巴 Java 开发手册》：
+
+1. **命名规范**
+   - 类名：大驼峰（UserService）
+   - 方法名：小驼峰（getUserById）
+   - 常量：全大写下划线（MAX_COUNT）
+
+2. **异常处理**
+   ```java
+   try {
+       // 业务代码
+   } catch (SpecificException e) {
+       // 具体异常处理
+       log.error("操作失败", e);
+       throw new BusinessException("用户友好的错误信息");
+   }
+   ```
+
+3. **日志规范**
+   ```java
+   // 使用 SLF4J + Logback
+   @Slf4j
+   public class UserService {
+       public void processUser(Long userId) {
+           log.info("开始处理用户，userId={}", userId);
+           // 业务逻辑
+           log.debug("详细调试信息");
+       }
+   }
+   ```
+
+### 性能优化技巧
+
+1. **使用连接池**
+   - 数据库连接池（HikariCP）
+   - Redis 连接池
+   - HTTP 连接池
+
+2. **缓存策略**
+   - 本地缓存（Caffeine）
+   - 分布式缓存（Redis）
+   - 多级缓存
+
+3. **异步处理**
+   ```java
+   @Async
+   public CompletableFuture<String> processAsync() {
+       // 异步任务
+       return CompletableFuture.completedFuture("result");
+   }
+   ```
+
+4. **批量操作**
+   - 批量插入数据库
+   - 批量更新缓存
+   - 使用 MyBatis-Plus 的批量方法
+
+## 开发工具
+
+### IDE
+- **IntelliJ IDEA**：最强大的 Java IDE（推荐）
+- **Eclipse**：免费开源
+- **VS Code**：轻量级，配合插件使用
+
+### 构建工具
+- **Maven**：主流依赖管理工具
+- **Gradle**：更灵活，构建速度快
+
+### 版本控制
+- **Git**：必备技能
+- **SVN**：老项目可能使用
+
+### 调试工具
+- **Arthas**：阿里开源的 Java 诊断工具
+- **JProfiler**：性能分析
+- **VisualVM**：JVM 监控
+
+## 学习资源
+
+### 在线教程
+- **廖雪峰 Java 教程**：适合入门
+- **菜鸟教程**：基础语法查询
+- **尚硅谷视频**：系统学习课程
+
+### 推荐书籍
+- **《Java 核心技术》**：基础必读
+- **《Effective Java》**：进阶必读
+- **《深入理解 Java 虚拟机》**：JVM 深入
+- **《Spring 实战》**：Spring 框架学习
+
+### 技术社区
+- **掘金**：中文技术文章
+- **Stack Overflow**：问题解答
+- **GitHub**：优秀开源项目
+- **CSDN/博客园**：个人博客平台
+
+## 常见陷阱
+
+### 1. 字符串拼接
+```java
+// 错误：循环中使用 + 拼接
+String result = "";
+for (int i = 0; i < 10000; i++) {
+    result += i;  // 每次都创建新对象
+}
+
+// 正确：使用 StringBuilder
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 10000; i++) {
+    sb.append(i);
+}
+String result = sb.toString();
+```
+
+### 2. 集合的并发修改
+```java
+// 错误：遍历时删除
+List<String> list = new ArrayList<>(Arrays.asList("a", "b", "c"));
+for (String s : list) {
+    if ("b".equals(s)) {
+        list.remove(s);  // ConcurrentModificationException
+    }
+}
+
+// 正确：使用迭代器
+Iterator<String> it = list.iterator();
+while (it.hasNext()) {
+    if ("b".equals(it.next())) {
+        it.remove();
+    }
+}
+```
+
+### 3. 空指针异常
+```java
+// 防御性编程
+public void processUser(User user) {
+    if (user != null && user.getName() != null) {
+        // 业务逻辑
+    }
+
+    // 或使用 Optional
+    Optional.ofNullable(user)
+        .map(User::getName)
+        .ifPresent(name -> {
+            // 业务逻辑
+        });
+}
+```
+
+## 内容导航
+
+### JavaSE 基础
+- [数组操作](./javase/array) - 数组基础算法和常用技巧
+- [循环练习](./javase/for_exercise) - for/while 循环实战
+- [随机数](./javase/random) - Random 类使用详解
+- [面试题集](./javase/interview) - 高频面试题精选
+
+### Spring Boot 实战
+- [MQTT 集成](./springboot/mqtt) - 物联网通信协议集成
+- [日志 AOP Starter](./springboot/log_aop_starter) - 自定义 Starter 开发
+
+### 开发技巧
+- [自定义 Banner](./banner) - 个性化启动横幅设置
+
+---
+
+**学习建议**：Java 学习是一个循序渐进的过程。先打好 JavaSE 基础，理解面向对象思想，然后深入 Spring 生态系统。多做项目，多读源码，多思考设计模式的应用。
+
+**项目驱动**：学习技术的最好方式是做项目。可以从简单的增删改查系统开始，逐步过渡到电商系统、博客系统、后台管理系统等复杂项目。
+
+**持续学习**：Java 生态在不断演进，关注 Java 新版本特性、Spring Boot 更新、微服务架构发展。保持学习热情，你会在 Java 开发的道路上越走越远。

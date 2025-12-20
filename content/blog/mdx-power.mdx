@@ -1,0 +1,73 @@
+---
+title: MDX 的强大功能
+description: 探索 MDX 如何将 Markdown 的简洁性与 React 组件的灵活性完美结合。
+author: AI Note 团队
+date: 2024-12-20
+---
+
+## MDX 是什么?
+
+MDX 是 Markdown 的超集,允许你在 Markdown 文档中使用 JSX 和 React 组件。
+
+### 传统 Markdown
+
+传统 Markdown 简单直接:
+
+```markdown
+# 标题
+这是一段文字。
+```
+
+### MDX 的魔力
+
+但 MDX 可以做更多:
+
+```mdx
+import { Alert } from '@/components/alert'
+
+# 标题
+
+<Alert type="info">
+  这是一个自定义组件!
+</Alert>
+```
+
+### 实际应用
+
+#### 1. 交互式示例
+
+你可以在文档中嵌入实时代码示例:
+
+```tsx
+function Counter() {
+  const [count, setCount] = useState(0);
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      点击次数: {count}
+    </button>
+  );
+}
+```
+
+#### 2. 数据可视化
+
+```tsx
+<Chart data={salesData} type="line" />
+```
+
+#### 3. 条件渲染
+
+```mdx
+{process.env.NODE_ENV === 'development' && (
+  <Warning>这是开发环境专用内容</Warning>
+)}
+```
+
+### 优势总结
+
+- ✅ 保留 Markdown 的简洁性
+- ✅ 获得 React 的强大功能
+- ✅ 类型安全 (配合 TypeScript)
+- ✅ 组件复用
+
+MDX 是现代文档的未来!

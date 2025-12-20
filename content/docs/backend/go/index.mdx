@@ -1,0 +1,305 @@
+---
+title: Go 语言开发
+description: Go 语言学习笔记、项目实践和最佳实践指南
+---
+
+# Go 语言开发
+
+Go（又称 Golang）是 Google 开发的现代编程语言，专为构建简单、可靠、高效的软件而设计。它结合了静态类型语言的安全性和动态语言的开发效率，成为云原生时代的首选语言之一。
+
+## 为什么选择 Go？
+
+### 简洁而强大
+Go 的设计哲学是"少即是多"：
+- **语法简洁**：25 个关键字，易学易读
+- **标准库强大**：内置 HTTP、JSON、并发等常用功能
+- **工具链完善**：格式化、测试、性能分析一应俱全
+- **快速编译**：百万行代码秒级编译
+
+### 并发编程的艺术
+Go 将并发作为一等公民：
+- **Goroutine**：轻量级线程，创建成本极低
+- **Channel**：类型安全的通信机制
+- **Select**：优雅的多路复用
+- **简单模型**：不需要理解复杂的线程、锁机制
+
+### 云原生的基石
+现代基础设施的核心都用 Go 构建：
+- **容器编排**：Kubernetes、Docker
+- **服务网格**：Istio、Linkerd
+- **数据库**：TiDB、CockroachDB、InfluxDB
+- **监控系统**：Prometheus、Grafana
+- **微服务框架**：go-micro、go-kit
+
+### 工程效率
+Go 强调团队协作和长期维护：
+- **强制格式化**：gofmt 消除代码风格争议
+- **依赖管理**：go mod 简化包管理
+- **内置测试**：testing 包和 benchmark
+- **静态分析**：vet、staticcheck 等工具
+
+## 学习路径
+
+### 1. 基础语法（1-2 周）
+- 变量、常量、数据类型
+- 控制结构（if、for、switch）
+- 函数和方法
+- 包管理和可见性
+
+### 2. 核心特性（2-3 周）
+- **指针和接收者**：理解值接收者 vs 指针接收者
+- **接口**：Go 的多态实现方式
+- **错误处理**：error 类型和惯用模式
+- **defer、panic、recover**：资源管理和异常处理
+
+### 3. 并发编程（2-3 周）
+- Goroutine 基础
+- Channel 通信
+- Select 多路复用
+- 并发模式（worker pool、pipeline 等）
+- 同步原语（Mutex、WaitGroup 等）
+
+### 4. 实战项目（持续）
+- RESTful API 服务
+- 微服务架构
+- 数据库操作（SQL/NoSQL）
+- 消息队列集成
+- 容器化部署
+
+## 关键概念深入
+
+### 接收者类型：值 vs 指针
+
+这是 Go 初学者最常困惑的概念之一。理解何时使用值接收者、何时使用指针接收者，对写出地道的 Go 代码至关重要。
+
+**值接收者（Value Receiver）**
+```go
+func (p Person) GetName() string {
+    return p.Name  // 操作副本，不影响原始数据
+}
+```
+
+**指针接收者（Pointer Receiver）**
+```go
+func (p *Person) SetName(name string) {
+    p.Name = name  // 修改原始数据
+}
+```
+
+**选择原则：**
+- 需要修改接收者 → 使用指针接收者
+- 接收者是大型结构体 → 使用指针接收者（避免复制）
+- 实现接口的一致性 → 统一使用同一种类型
+- 小型不可变数据 → 可以使用值接收者
+
+### 错误处理哲学
+
+Go 没有异常机制，而是通过返回 error 值来处理错误：
+
+```go
+func ReadFile(path string) ([]byte, error) {
+    data, err := os.ReadFile(path)
+    if err != nil {
+        return nil, fmt.Errorf("failed to read %s: %w", path, err)
+    }
+    return data, nil
+}
+```
+
+**最佳实践：**
+- 总是检查 error 返回值
+- 使用 `%w` 包装错误以保留错误链
+- 在适当的层级处理错误
+- 对于不可恢复的错误使用 panic
+
+### 接口的妙用
+
+Go 的接口是隐式实现的，无需显式声明：
+
+```go
+type Writer interface {
+    Write([]byte) (int, error)
+}
+
+// 任何实现了 Write 方法的类型都自动满足 Writer 接口
+```
+
+**接口设计原则：**
+- 接口应该小而专注（单一职责）
+- 接受接口，返回具体类型
+- 使用标准库接口（io.Reader、io.Writer 等）
+
+## 项目结构最佳实践
+
+### 标准项目布局
+
+```
+myproject/
+├── cmd/                  # 主应用程序入口
+│   └── myapp/
+│       └── main.go
+├── internal/             # 私有应用代码
+│   ├── handler/          # HTTP 处理器
+│   ├── service/          # 业务逻辑
+│   └── repository/       # 数据访问层
+├── pkg/                  # 可供外部使用的库代码
+├── api/                  # API 定义（OpenAPI/Protobuf）
+├── configs/              # 配置文件
+├── scripts/              # 构建、安装、分析脚本
+├── test/                 # 额外的测试数据
+├── docs/                 # 设计和用户文档
+├── go.mod                # 依赖管理
+└── README.md
+```
+
+### 分层架构
+
+**推荐的三层架构：**
+1. **Handler 层**：处理 HTTP 请求，参数验证
+2. **Service 层**：业务逻辑实现
+3. **Repository 层**：数据持久化
+
+好处：
+- 职责清晰，易于测试
+- 业务逻辑与数据访问解耦
+- 便于替换底层实现
+
+## 工具和生态
+
+### 必备工具
+- **go fmt**：自动格式化代码
+- **go vet**：静态代码分析
+- **golangci-lint**：综合 linter
+- **delve**：强大的调试器
+- **pprof**：性能分析工具
+
+### 热门框架和库
+
+**Web 框架**
+- Gin：高性能 HTTP 框架
+- Echo：简洁优雅的 web 框架
+- Fiber：Express 风格的快速框架
+
+**ORM**
+- GORM：功能完整的 ORM
+- sqlx：SQL 增强库
+- ent：实体框架（Facebook 出品）
+
+**微服务**
+- go-micro：微服务开发框架
+- gRPC-go：高性能 RPC 框架
+- Kratos：B 站开源微服务框架
+
+**工具库**
+- viper：配置管理
+- logrus/zap：结构化日志
+- testify：测试工具集
+
+## 学习资源
+
+### 官方资源
+- **Go Tour**：[tour.golang.org](https://tour.golang.org) - 交互式教程
+- **Effective Go**：官方风格指南
+- **Go By Example**：实例代码学习
+
+### 推荐书籍
+- **《Go 程序设计语言》**（The Go Programming Language）：圣经级教材
+- **《Go 语言实战》**：实战导向
+- **《Go 并发编程实战》**：深入并发模型
+
+### 实践平台
+- **LeetCode**：算法练习（Go 实现）
+- **Exercism**：小型编程练习
+- **GitHub**：阅读优秀开源项目代码
+
+## 职业发展
+
+### Go 的应用领域
+- **云基础设施**：容器、编排、服务网格
+- **微服务后端**：高并发 API 服务
+- **DevOps 工具**：自动化运维工具
+- **区块链**：以太坊、超级账本
+- **实时系统**：消息队列、流处理
+
+### 市场需求
+Go 工程师在以下领域需求旺盛：
+- 云计算公司（阿里云、腾讯云）
+- 互联网大厂（字节、B 站、美团）
+- 初创公司（云原生方向）
+- 开源社区
+
+## 常见陷阱
+
+### 1. Goroutine 泄漏
+```go
+// 错误：goroutine 永远不会退出
+go func() {
+    for {
+        // 无退出条件
+    }
+}()
+
+// 正确：提供退出机制
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+
+go func() {
+    for {
+        select {
+        case <-ctx.Done():
+            return
+        default:
+            // 工作逻辑
+        }
+    }
+}()
+```
+
+### 2. 闭包变量捕获
+```go
+// 错误：所有 goroutine 都会打印 10
+for i := 0; i < 10; i++ {
+    go func() {
+        fmt.Println(i)  // 捕获的是变量 i，而非值
+    }()
+}
+
+// 正确：传递参数
+for i := 0; i < 10; i++ {
+    go func(n int) {
+        fmt.Println(n)
+    }(i)
+}
+```
+
+### 3. Slice 的共享底层数组
+```go
+// 潜在问题：切片共享底层数组
+s1 := []int{1, 2, 3, 4, 5}
+s2 := s1[1:3]  // s2 = [2, 3]
+s2[0] = 99     // s1 也会变成 [1, 99, 3, 4, 5]
+
+// 安全做法：复制切片
+s2 := make([]int, 2)
+copy(s2, s1[1:3])
+```
+
+## 内容导航
+
+### 语言基础
+- [Go 复习笔记](./go_review) - 接收者类型、指针、接口等核心概念详解
+
+### 项目实践
+- [项目结构设计](./project/structure) - 标准项目布局和分层架构
+- [项目实战练习](./project/project_exercise) - 真实项目开发实践
+
+### 专题应用
+- [通知系统实现](./notification/mideng) - 消息通知功能设计与实现
+
+---
+
+**学习建议**：Go 的语法可以在一周内掌握，但成为 Go 高手需要深入理解并发模型、接口设计和工程实践。多写代码，多读优秀项目源码，在实践中提升。
+
+**社区参与**：加入 Go 中文社区、关注 Go 官方博客、参与开源项目，与其他 Gopher 交流经验。
+
+Go 的未来是光明的。云原生时代，选择 Go 就是选择了正确的方向。

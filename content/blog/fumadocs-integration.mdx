@@ -1,0 +1,54 @@
+---
+title: 如何使用 Fumadocs 构建文档站点
+description: 深入了解 Fumadocs 的强大功能,以及如何利用它快速搭建专业的文档网站。
+author: AI Note 团队
+date: 2024-12-18
+---
+
+## Fumadocs 简介
+
+Fumadocs 是一个专为 React.js 设计的文档框架,它提供了构建现代文档网站所需的一切。
+
+### 为什么选择 Fumadocs?
+
+1. **开箱即用**: 无需复杂配置即可开始
+2. **高度可定制**: 从主题到组件,一切皆可定制
+3. **性能优化**: 基于 Next.js,拥有出色的性能
+4. **SEO 友好**: 内置 SEO 优化
+
+### 核心概念
+
+#### 内容集合 (Collections)
+
+Fumadocs 使用内容集合来组织你的文档:
+
+```typescript
+export const docs = defineDocs({
+  dir: 'content/docs',
+  docs: {
+    schema: frontmatterSchema,
+  },
+});
+```
+
+#### Source Adapter
+
+Source Adapter 将内容集合转换为可用的数据源:
+
+```typescript
+export const source = loader({
+  baseUrl: '/docs',
+  source: docs.toFumadocsSource(),
+});
+```
+
+### 最佳实践
+
+- 使用清晰的文件结构
+- 编写有意义的 frontmatter
+- 善用 MDX 组件
+- 保持文档更新
+
+## 总结
+
+Fumadocs 让构建文档变得简单而有趣。试试看吧!
