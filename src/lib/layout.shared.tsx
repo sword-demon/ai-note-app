@@ -1,11 +1,17 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
-import { BookAIcon } from "lucide-react";
+import { BookAIcon, NewspaperIcon } from "lucide-react";
 
 export const linkItems = [
   {
     icon: <BookAIcon />,
     text: "Blog",
     url: "/blog",
+    active: "nested-url" as const,
+  },
+  {
+    icon: <NewspaperIcon />,
+    text: "HN 2025",
+    url: "/news",
     active: "nested-url" as const,
   },
 ];
