@@ -9,6 +9,9 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     Linkcard,
     // 覆盖默认的 img 标签，使所有 markdown 图片都支持点击放大预览
     img: ClickableImage,
-    ...components,
+    // 确保 components 参数中的 img 不会覆盖我们的 ClickableImage
+    ...(components && Object.fromEntries(
+      Object.entries(components).filter(([key]) => key !== 'img')
+    )),
   };
 }

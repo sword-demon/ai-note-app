@@ -1,7 +1,7 @@
 'use client'; // 客户端组件
 
 import { useState, useEffect } from 'react'; // 导入 React hooks
-import Image from 'next/image'; // 导入 Next.js 图片组件
+import { createPortal } from 'react-dom'; // 导入 Portal 用于模态框渲染
 
 // 图片预览模态框组件
 export function ImagePreviewModal({
@@ -41,7 +41,10 @@ export function ImagePreviewModal({
     }
   };
 
-  return (
+  // 使用 Portal 将模态框渲染到 body，避免 HTML 嵌套问题
+  if (typeof document === 'undefined') return null;
+  
+  return createPortal(
     <div
       className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={handleBackdropClick}
@@ -90,7 +93,8 @@ export function ImagePreviewModal({
       <div className="absolute top-4 left-4 text-white/60 text-sm">
         点击图片外区域或按 ESC 关闭
       </div>
-    </div>
+    </div>,
+    document.body // 渲染到 body，避免嵌套在 <p> 标签内
   );
 }
 
@@ -103,24 +107,34 @@ export function ClickableImage({
   // 状态：是否显示预览模态框
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  // 如果没有 src，返回 null
-  if (!src) return null;
+  // 处理 src：可能是字符串或对象（Next.js 图片优化）
+  const imageSrc = typeof src === 'string' 
+    ? src 
+    : typeof src === 'object' && src !== null && 'src' in src 
+      ? (src as any).src 
+      : null;
+
+  // 如果没有有效的 src，返回 null
+  if (!imageSrc || typeof imageSrc !== 'string') {
+    return null;
+  }
 
   return (
     <>
       {/* 可点击的图片 */}
-      <span className="inline-block cursor-zoom-in relative group my-4">
+      <span className="inline-block cursor-zoom-in relative group my-4 max-w-full">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={src}
-          alt={alt}
           {...props}
+          src={imageSrc}
+          alt={alt}
           onClick={() => setIsPreviewOpen(true)}
-          className="rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+          className={`max-w-full h-auto rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${props.className || ''}`}
+          style={{ display: 'block' }}
         />
         {/* 悬停时显示放大提示 */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-all duration-300 rounded-lg pointer-events-none">
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 text-stone-800 px-3 py-1.5 rounded-full text-sm font-medium shadow-lg flex items-center gap-2">
+        <span className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-all duration-300 rounded-lg pointer-events-none">
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 text-stone-800 px-3 py-1.5 rounded-full text-sm font-medium shadow-lg flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -138,14 +152,14 @@ export function ClickableImage({
               <line x1="8" y1="11" x2="14" y2="11" />
             </svg>
             点击放大
-          </div>
-        </div>
+          </span>
+        </span>
       </span>
 
       {/* 图片预览模态框 */}
       {isPreviewOpen && (
         <ImagePreviewModal
-          src={src}
+          src={imageSrc}
           alt={alt}
           onClose={() => setIsPreviewOpen(false)}
         />

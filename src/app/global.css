@@ -126,3 +126,22 @@ body {
 .cursor-zoom-in {
   cursor: zoom-in;
 }
+
+/* 强制显示 MDX 图片 - 修复 DocsBody 中图片不显示的问题 */
+article img,
+.prose img,
+[data-docs-body] img {
+  display: block !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* 确保我们的图片预览组件在 prose 中正常显示 */
+article span:has(> img),
+.prose span:has(> img),
+[data-docs-body] span:has(> img) {
+  display: inline-block !important;
+  max-width: 100% !important;
+}
