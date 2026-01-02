@@ -1,11 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Copy, Check, ExternalLink, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/cn';
+import { useState } from "react";
+import { Copy, Check, ExternalLink, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/cn";
 
-const buttonBaseStyles = "inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-colors";
-const buttonSecondaryStyles = "border bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent hover:text-fd-accent-foreground";
+const buttonBaseStyles =
+  "inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-colors";
+const buttonSecondaryStyles =
+  "border bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent hover:text-fd-accent-foreground";
 
 export function CopyMarkdownButton({ markdown }: { markdown: string }) {
   const [copied, setCopied] = useState(false);
@@ -16,7 +18,7 @@ export function CopyMarkdownButton({ markdown }: { markdown: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
@@ -52,7 +54,9 @@ export function OpenButton({ url }: { url: string }) {
         aria-label="Open"
       >
         Open
-        <ChevronDown className={cn("size-4 transition-transform", isOpen && "rotate-180")} />
+        <ChevronDown
+          className={cn("size-4 transition-transform", isOpen && "rotate-180")}
+        />
       </button>
 
       {isOpen && (
@@ -68,7 +72,10 @@ export function OpenButton({ url }: { url: string }) {
               在新标签页打开
             </a>
             <a
-              href={`https://github.com/yourusername/ai-note-app/blob/main/content/docs${url.replace('/docs', '')}.mdx`}
+              href={`https://github.com/sword-demon/ai-note-app/blob/main/content/docs${url.replace(
+                "/docs",
+                ""
+              )}.mdx`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-fd-accent transition-colors"
