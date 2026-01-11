@@ -1,0 +1,45 @@
+---
+title: Go module
+description: go module backend for Dagger
+---
+
+## go module 包管理介绍
+
+- `1.11`版本引入
+- `1.12`版本正式支持
+
+>告别`GOPATH`,使用`go module`管理项目,就不需要非得把项目放到`GOPATH/src`目录下了,你可以在你的磁盘的任意位置新建一个项目.
+
+## 如何开启
+
+```bash
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
+
+# 在此产看对应的内容是否变化
+go env 
+```
+
+`GO111MODULE`变量有三个值:
+- `on`: 开启`go module`支持
+- `off`: 关闭`go module`支持
+- `auto`: 根据项目目录是否在`GOPATH`下自动决定是否开启
+
+
+## 使用命令行方式创建 go module 项目
+
+```bash
+cd <your-project-path>
+go mod init <module-name>
+```
+
+`<module-name>`: 一般是项目的仓库地址,如`github.com/username/repo`
+
+## 安装 gin 框架
+
+```bash
+cd <your-project-path>
+go get -u github.com/gin-gonic/gin
+```
+
+此时会在项目目录下生成 `go.mod` 和 `go.sum` 文件,里面会有对应的依赖信息.
