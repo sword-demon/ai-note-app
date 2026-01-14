@@ -43,3 +43,10 @@ go get -u github.com/gin-gonic/gin
 ```
 
 此时会在项目目录下生成 `go.mod` 和 `go.sum` 文件,里面会有对应的依赖信息.
+
+## Golang 配置 File Watchers
+
+- 打开设置 -> 搜索 `File Watchers` -> 点击右上角的 `+` 号 -> 选择 `go mod tidy`
+- 还可以加 `go fmt` 和 `goimports` 的 File Watchers,`goimports` 需要先安装 `go get golang.org/x/tools/cmd/goimports`
+- 或者使用 `golangci-lint` 的 File Watchers,需要先安装 `go get github.com/golangci/golangci-lint/cmd/golangci-lint`
+- 或者使用工具里的保存时的操作选择重新设置代码格式和优化`import`和重新排列代码
