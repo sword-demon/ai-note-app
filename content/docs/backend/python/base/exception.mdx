@@ -1,0 +1,131 @@
+---
+title: 异常处理
+description: 了解如何在 Python 后端开发中处理异常。
+---
+
+# 异常处理
+
+```python
+>>> print(a)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'a' is not defined
+```
+
+这是我们经常看到的程序运行出现的错误.
+异常时一个事件,该事件会在程序执行过程中发生,影响程序的正常执行.
+在`python`中的异常其实是一个类,都继承了`Exception`基类.
+
+---
+
+## 如何使用异常
+
+如果`python`中的代码出现异常,但是不想让程序出现崩溃的做法
+
+```python title="异常处理.py"
+def exp_exception(a, b):
+    return a / b
+
+
+if __name__ == '__main__':
+    print(exp_exception(1, 0))  # 如果代码产生异常，可能会导致程序异常退出
+```
+---
+
+我们可以使用
+
+```python
+try:
+    # 需要执行的代码段
+    pass
+except Exception as e:
+    # 如果执行的代码块出现了异常,则在 except 中执行自己定义的出错逻辑
+    print(e)
+```
+
+来进行捕获异常
+
+
+```python title="异常处理.py"
+def exp_exception(a, b):
+    return a / b
+
+
+if __name__ == '__main__':
+    try:  # 用来检测当前要执行的代码是否有异常
+        print(exp_exception(1, 0))  # 如果代码产生异常，可能会导致程序异常退出
+    except ZeroDivisionError as e:  # 如果 try 代码块中的代码执行出现了异常则进行捕获
+        print(e)
+        print("除法中除数不能为 0")
+        pass
+```
+
+结果:
+
+```bash
+division by zero
+除法中除数不能为 0
+```
+
+---
+
+如果不知道会出现什么异常,这里`except`后面的是可以忽略不写的,或者直接写基类`Exception`.
+
+```python title="异常处理.py"
+def exp_exception(a, b):
+    if b == 0:
+        raise ZeroDivisionError("除数不能为 0")
+    return a / b
+
+
+if __name__ == '__main__':
+    try:  # 用来检测当前要执行的代码是否有异常
+        print(exp_exception(1, 0))  # 如果代码产生异常，可能会导致程序异常退出
+    except ZeroDivisionError as e:  # 如果 try 代码块中的代码执行出现了异常则进行捕获
+        print(e)
+        print("除法中除数不能为 0")
+        pass
+```
+
+> `except ZeroDivisionError as e` 这里的`as e`是把捕获到的异常赋值给变量`e`,方便我们在`except`代码块中使用.
+
+## 常见的会出现异常的地方
+
+- 文件读写
+- 数据库链接
+- 云服务器链接
+
+你在去运行代码的时候已经发现了程序错误了,但是不想因为这个错误导致程序中断,这个时候就可以使用异常了.
+
+
+<Callout title="注意点" type="error">
+  线程里面不能使用try except 来捕获异常,否则会导致线程无法终止.
+</Callout>
+
+## 断言
+
+<Callout title="定义" type="info">
+在执行一段代码时,可以加上判断,如果判断的结果和设置的结果不一致则抛出异常.
+
+>爬虫中用的比较多
+</Callout>
+
+
+```python title="断言.py"
+"""
+案例：访问一个网站，如果访问的网站返回的状态码不是 200 则故意抛出异常
+
+前提: pip install requests
+"""
+
+import requests
+
+url = "https://www.baidu.com/user_name/lalala"
+
+response = requests.get(url)
+assert response.status_code == 200, StopIteration # 自己抛出了一个异常,可以根据要求进行自我更改
+```
+
+`assert`和`raise`的区别:
+- `assert`是断言,用来判断某个条件是否成立,如果不成立则抛出异常.
+- `raise`是用来主动抛出一个异常.是没有条件的
