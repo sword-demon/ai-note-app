@@ -129,3 +129,277 @@ assert response.status_code == 200, StopIteration # 自己抛出了一个异常,
 `assert`和`raise`的区别:
 - `assert`是断言,用来判断某个条件是否成立,如果不成立则抛出异常.
 - `raise`是用来主动抛出一个异常.是没有条件的
+
+## finally
+
+在代码执行的过程中如果出现了异常,并且出现异常之后还需要执行其他代码则可以使用`finally`实现
+
+```python title="finally.py"
+try:
+    print(9 / 3)
+except Exception as e:
+    print(e)
+else:
+    print("ok")
+finally:
+    print("无论代码是否发生异常都必须执行当前语句")
+```
+
+结果:
+
+```bash
+3.0
+ok
+无论代码是否发生异常都必须执行当前语句
+```
+
+<Callout title="使用场景" type="info">
+一般用于我们的数据库的读写操作,无论数据库的读写是否成功,都需要关闭数据库连接.
+
+```python title="数据库操作简单代码.py"
+try:
+    self.cursor.execute(sql, args)
+    # 事务提交
+    self.db.commit()
+    print("执行成功")
+except Exception as e:
+    print('数据插入失败')
+finally:
+    # 事务回滚    
+    self.db.rollback()  # 注意: 这里不能 self.db.close()
+```
+
+> 用的较多的场景:
+1. 数据存储
+2. 文件读写
+</Callout>
+
+## 自定义异常
+
+```python title="自定义异常.py"
+class LoginError(Exception):
+    def __str__(self):
+        """通过 print 来触发的方法"""
+        return '用户名或密码错误'
+
+    def __repr__(self):
+        return "用户名或密码错误"
+
+
+name = input('请输入用户名')
+password = input('请输入密码')
+
+local_name = '无解'
+local_password = '123456'
+
+try:
+    if name != local_name or password != local_password:
+        # 手动抛出异常
+        raise LoginError
+except LoginError as e:
+    print(e)
+    
+if password == local_password and name == local_name:
+    print('登录成功')
+else:
+    print('登录失败')
+
+```
+
+>结果
+
+```bash
+请输入用户名dwqdqwdwq
+请输入密码dwqdqw
+用户名或密码错误
+登录失败
+```
+
+
+<Callout title="注意" type="error">
+自定义异常一定要继承 `Exception`
+</Callout>
+
+---
+
+`__repr__`注意是用在交互式命令行中显示对象信息的,而`__str__`是用在`print`函数中显示对象信息的.
+
+这里用到了`ipython`
+
+```bash title="交互式命令行安装"
+pip install ipython
+
+# 或者
+
+pip install ipython -i https://pypi.douban.com/simple 
+```
+
+```bash
+In [1]: class Test:
+   ...:     def __str__(self):
+   ...:         return 'abc'
+   ...: 
+
+In [2]: test = Test()
+
+In [3]: print(test)
+abc
+
+In [4]: test
+Out[4]: <__main__.Test at 0x109970590>
+
+In [5]: class Test:
+   ...:     def __repr__(self):
+   ...:         return 'abc'
+   ...: 
+
+In [6]: test = Test()
+
+In [7]: test
+Out[7]: abc
+```
+
+
+## 文件内容读取
+
+```python title="文本文件中的内容读取.py"
+# -*- coding: utf-8 -*-
+"""
+@File    : 文本文件中的内容读取.py
+@Author  : wxvirus
+@Time    : 2026/1/22 21:12
+@Desc    : 完成文本文件中的内容读取: 测试文件.txt
+"""
+
+"""
+python 的内置函数:
+    open(): 返回一个对象，称之为文件对象
+
+文件对象中提供了内容读取的方法: read()
+"""
+
+# 1. 定义当前文件的路径(路径一般都是写相对路径)
+file_path = './测试文件.txt'
+
+file_obj = open(file_path, 'r', encoding='utf-8')
+
+# 2. 使用文件对象进行内容读取
+print(file_obj.read())
+print(file_obj.readlines())  # 返回的是一个列表
+
+# 释放计算机资源
+file_obj.close() # 如果不释放,文件对象越积越多,可能会内存溢出,程序闪退或者崩溃了
+```
+
+`open()`的第二个参数`mode`有四种常用的模式:
+- `r`: 以只读的方式打开文件,文件的指针放在
+- `w`: 以写入的方式打开文件,如果文件存在则覆盖,如果文件不存在则创建
+- `a`: 以追加的方式打开文件,如果文件存在则在文件末尾进行追加,如果文件不存在则创建
+- `w+`: 以读写的方式打开文件,如果文件存在则覆盖,如果文件不存在则创建
+- `b`: 以二进制的方式打开文件,一般用于图片的读,会有`rb`和`wb`两种模式,分别表示读和写,还有`wb+`表示读写,`ab`表示追加.
+
+
+```python title="文本文件中的内容写入.py"
+# 3. 使用文件对象进行内容写入
+write_obj = open(file_path, 'w', encoding='utf-8')  # 覆盖式写入
+write_obj.write('晚上一起写代码')
+
+# 4. 使用文件对象进行内容追加
+write_obj = open(file_path, 'a', encoding='utf-8')  # 追加写入
+write_obj.write('晚上一起写代码\ndwqdwqdwq') # 写入换行
+
+stu_name_list = ['无解', '哈哈', '?\n']
+# writelines 可以传一个可迭代的对象
+# 多行写，写多行
+write_obj.writelines(stu_name_list)
+```
+
+---
+
+```python title="with.py"
+with open(file_path, 'r', encoding='utf-8') as file_obj:
+    # 在上下文管理器当中，是不需要主动 close() 的
+    print(file_obj.read())
+```
+
+## 自定义类完成文件读写
+
+```python title="自定义类完成文件读写.py"
+# -*- coding: utf-8 -*-
+"""
+@File    : 自定义类完成文件读写.py
+@Author  : wxvirus
+@Time    : 2026/1/22 21:37
+@Desc    : 
+"""
+
+
+class MyOpenFile:
+    def __init__(self, file_path):
+        self.file_obj = None
+        self.file_path = file_path
+
+    def __enter__(self):
+        print('即将创建文件对象...')
+        self.file_obj = open(self.file_path, 'r', encoding='utf-8')
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """退出的时候调用"""
+        print('即将释放文件对象...')
+        self.file_obj.close()
+
+    def my_read(self):
+        """打印读取的内容"""
+        print(self.file_obj.read())
+
+
+with MyOpenFile('./测试文件.txt') as file:
+    file.my_read()
+```
+
+>结果
+
+```bash
+即将创建文件对象...
+晚上一起写代码晚上一起写代码
+dwqdwqdwq晚上一起写代码
+dwqdwqdwq无解哈哈?
+晚上一起写代码
+dwqdwqdwq无解哈哈?
+
+即将释放文件对象...
+```
+
+## 使用`w+`同一个文件对象进行文件读写
+
+```python title="w+模式读写.py"
+with open('./测试文件.txt', 'w+', encoding='utf-8') as file:
+    file.write('今天天气不错...')
+    # 将游标归为
+    file.seek(0)
+    # 不归位,这里则读取不到写入的内容,因为游标已经在文件末尾了
+    print(file.read())
+
+```
+
+## 二进制文件写入
+
+```python title="二进制文件写入.py"
+# -*- coding: utf-8 -*-
+"""
+@File    : 二进制文件写入.py
+@Author  : wxvirus
+@Time    : 2026/1/22 21:47
+@Desc    : 
+"""
+
+import requests
+
+response = requests.get("https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png")
+
+# 二进制文件写入
+with open('baidu.png', 'wb') as f:
+    f.write(response.content)
+
+```
