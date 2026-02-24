@@ -255,3 +255,74 @@ export default class extends BaseSchema {
 }
 
 ```
+
+### 使用 factory 创建数据
+
+```typescript title="database/factories/category_factory.ts"
+import factory from '@adonisjs/lucid/factories'
+import Category from '#models/category'
+
+export const CategoryFactory = factory
+  .define(Category, async ({ faker }) => {
+    return {
+      title: faker.lorem.sentence(),
+    }
+  })
+  .build()
+
+```
+
+也可以使用`node ace repl`进入交互式命令行处理
+
+### 使用 seeder 来批量创建数据
+
+```bash
+node ace make:seeder category
+DONE:    create database/seeders/category_seeder.ts
+```
+
+```typescript title="database/seeders/category_seeder.ts"
+import { CategoryFactory } from '#database/factories/category_factory'
+import { BaseSeeder } from '@adonisjs/lucid/seeders'
+
+export default class extends BaseSeeder {
+  async run() {
+    // Write your database queries inside the run method
+    // 创建多条数据
+    await CategoryFactory.createMany(3)
+  }
+}
+```
+
+也可以在里面查询某个数据修改某个数据
+
+```typescript title="database/seeders/category_seeder.ts"
+import { CategoryFactory } from '#database/factories/category_factory'
+import Category from '#models/category'
+import { BaseSeeder } from '@adonisjs/lucid/seeders'
+
+export default class extends BaseSeeder {
+  async run() {
+    // Write your database queries inside the run method
+    // 创建多条数据
+    await CategoryFactory.createMany(3)
+
+    const category = await Category.findOrFail(1)
+    category.title = '新的分类名称'
+    await category.save()
+    console.log(category)
+  }
+}
+```
+
+删除所有表并创建所有表然后填充数据
+```bash
+node ace migration:fresh --seed
+```
+
+## 修改配置文件调整时区
+
+```txt title=".env"
+# 将 UTC 换成 PRC 或者 Asia/Shanghai
+TZ=PRC
+```

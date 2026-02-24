@@ -1,0 +1,183 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1771864150606,
+  "projectRoot": "/Volumes/MOVESPEED/ai-note-app",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "16.0.10",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "19.2.3",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.3",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "build": "next build",
+      "dev": "next dev",
+      "start": "next start",
+      "types:check": "fumadocs-mdx && next typegen && tsc --noEmit",
+      "postinstall": "fumadocs-mdx",
+      "lint": "biome check",
+      "format": "biome format --write"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "public",
+      "scripts",
+      "src"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "content": {
+      "path": "content",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1771864150558,
+      "keyFiles": []
+    },
+    "outer": {
+      "path": "outer",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1771864150558,
+      "keyFiles": [
+        "2025-hacker-news.html"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 24,
+      "lastAccessed": 1771864150574,
+      "keyFiles": [
+        "blog-banner-lofi.jpg",
+        "blog-banner.jpg",
+        "code_zimu.png",
+        "hero-bg.jpg",
+        "image-20250816192058097.png"
+      ]
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 5,
+      "lastAccessed": 1771864150577,
+      "keyFiles": [
+        "README.md",
+        "convert-vitepress-containers.mjs",
+        "fix-mdx-curly-braces.mjs",
+        "fix-mdx-issues.mjs",
+        "migrate-docs.mjs"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 1,
+      "lastAccessed": 1771864150578,
+      "keyFiles": [
+        "mdx-components.tsx"
+      ]
+    },
+    "content/docs": {
+      "path": "content/docs",
+      "purpose": "Documentation",
+      "fileCount": 3,
+      "lastAccessed": 1771864150581,
+      "keyFiles": [
+        "brew.mdx",
+        "index.mdx",
+        "test.mdx"
+      ]
+    },
+    "src/app": {
+      "path": "src/app",
+      "purpose": "Application code",
+      "fileCount": 2,
+      "lastAccessed": 1771864150585,
+      "keyFiles": [
+        "global.css",
+        "layout.tsx"
+      ]
+    },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 2,
+      "lastAccessed": 1771864150588,
+      "keyFiles": [
+        "ImagePreview.tsx",
+        "Linkcard.tsx"
+      ]
+    },
+    "src/lib": {
+      "path": "src/lib",
+      "purpose": "Library code",
+      "fileCount": 3,
+      "lastAccessed": 1771864150593,
+      "keyFiles": [
+        "cn.ts",
+        "layout.shared.tsx",
+        "source.ts"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "content/docs/front/adonisjs/install-project.mdx",
+      "accessCount": 1,
+      "lastAccessed": 1771864213895,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
