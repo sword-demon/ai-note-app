@@ -1,0 +1,984 @@
+---
+title: "OpenClaw 官方飞书插件替换实战：安装 memory-lancedb-pro + 正确替换飞书插件的完整步骤和踩坑总结"
+description: "这篇文档记录了给 OpenClaw 安装 memory-lancedb"
+date: 2026-03-07
+author: 无限航行指南
+---
+
+这篇文档不是那种"看起来很完整、照着做就一定翻车"的假教程，而是一次**真实可复现**的折腾记录：
+
+* 怎么给 OpenClaw 安装 `memory-lancedb-pro`
+
+* 它到底解决了什么问题
+
+* 我们这次是怎么把 **官方 feishu-openclaw-plugin 替换旧飞书插件** 的
+
+* 中间踩了哪些坑，最后怎么补回来的
+
+如果你也想把 OpenClaw 从"聊完就忘"的状态，升级成"能记住经验、还能少踩坑"的版本，这篇基本够用了。
+
+***
+
+## 一、`memory-lancedb-pro` 到底是干嘛的？
+
+先说人话。
+
+`memory-lancedb-pro` 是 OpenClaw 的一个**增强型长期记忆插件**。它的作用不是单纯"多存点文本"，而是让 OpenClaw 真正开始具备"记住、找回、复用经验"的能力。
+
+相比普通记忆方案，它的价值主要在这几件事：
+
+* 支持 **向量检索 + BM25 全文检索** 的混合搜索
+
+* 支持 **Jina Reranker**，让回忆结果更准
+
+* 支持 **长期记忆沉淀**，把排错经验、规则、偏好写进去
+
+* 支持 **多 scope 隔离**，不容易把不同上下文记忆串台
+
+* 比较适合拿来沉淀：
+
+  * 用户偏好
+
+  * 技术排错经验
+
+  * 插件安装步骤
+
+  * OpenClaw 配置规则
+
+  * 反复踩坑后总结出来的铁律
+
+简单说，装完之后，OpenClaw 就不只是"当下会聊天"，而是开始有了点长期脑子。
+
+不装的话，很多经验第二天就像被狗吃了。挺真实的。
+
+![memory-lancedb-pro 功能架构](https://virusoss.oss-cn-shanghai.aliyuncs.com/1.png)
+
+***
+
+## 二、本次环境
+
+本次实际环境如下：
+
+* OpenClaw 配置目录：`~/.openclaw`
+
+* 插件目录：`~/.openclaw/extensions/memory-lancedb-pro`
+
+* Embedding Provider：Jina AI
+
+* 环境变量：`JINA_API_KEY`
+
+* LanceDB 数据目录：`~/.openclaw/memory/lancedb-pro`
+
+另外，这次还同步做了一件事：
+
+* **保留官方 feishu-openclaw-plugin**
+
+* **移除旧 feishu 插件配置**
+
+* **保留 channels.feishu，否则飞书消息通道会直接挂掉**
+
+这条后面会详细讲，因为这坑很容易把人坑得一脸问号。
+
+***
+
+## 三、安装 `memory-lancedb-pro` 的完整步骤
+
+### 1）先准备好 Jina API Key
+
+在 `~/.openclaw/.env` 中加入：
+
+```bash
+JINA_API_KEY=你的_jina_api_key
+
+```
+
+这次约定用的变量名就是：
+
+```bash
+JINA_API_KEY
+
+```
+
+后面插件配置里直接引用 `${JINA_API_KEY}`。
+
+***
+
+### 2）克隆插件仓库
+
+```bash
+cd ~/.openclaw/extensions
+git clone https://github.com/win4r/memory-lancedb-pro.git
+
+```
+
+克隆完成后目录应为：
+
+```bash
+~/.openclaw/extensions/memory-lancedb-pro
+
+```
+
+***
+
+### 3）安装依赖
+
+```bash
+cd ~/.openclaw/extensions/memory-lancedb-pro
+npm install
+
+```
+
+依赖装完后，插件本体就算落地了。
+
+***
+
+### 4）修改 `openclaw.json`
+
+需要动 4 个位置，少一个都可能不工作。
+
+### 4.1 配置插件加载路径
+
+```json
+{
+  "plugins": {
+    "load": {
+      "paths": [
+        "/Users/wxvirus/.openclaw/extensions/memory-lancedb-pro"
+      ]
+    }
+  }
+}
+
+```
+
+### 4.2 配置插件条目
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "memory-lancedb-pro": {
+        "enabled": true,
+        "config": {
+          "embedding": {
+            "apiKey": "${JINA_API_KEY}",
+            "model": "jina-embeddings-v5-text-small",
+            "baseURL": "https://api.jina.ai/v1",
+            "dimensions": 1024,
+            "taskQuery": "retrieval.query",
+            "taskPassage": "retrieval.passage",
+            "normalized": true
+          },
+          "dbPath": "~/.openclaw/memory/lancedb-pro",
+          "autoCapture": true,
+          "autoRecall": false,
+          "autoRecallMinLength": 8
+        }
+      }
+    }
+  }
+}
+
+```
+
+### 4.3 把插件加入 allowlist
+
+```json
+{
+  "plugins": {
+    "allow": [
+      "memory-lancedb-pro"
+    ]
+  }
+}
+
+```
+
+这一条特别重要。
+
+如果你只配了 `paths` 和 `entries`，但没加 `allow`，插件会显示：
+
+```plain&#x20;text
+disabled (not in allowlist)
+
+```
+
+看起来像是"都配了怎么还不工作"，其实就是白名单没放行。
+
+### 4.4 把 memory slot 指向它
+
+```json
+{
+  "plugins": {
+    "slots": {
+      "memory": "memory-lancedb-pro"
+    }
+  }
+}
+
+```
+
+### 4.5 禁用旧的 `memory-lancedb`
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "memory-lancedb": {
+        "enabled": false
+      }
+    }
+  }
+}
+
+```
+
+同一时间只保留一个 memory 插件比较稳，不要两边一起上，容易把自己整迷糊。
+
+***
+
+### 5）重启 Gateway
+
+```bash
+openclaw gateway restart
+
+```
+
+如果你只是改配置，到这一步就够了。
+
+但如果你改的是 `plugins/` 下面的 `.ts` 文件，那必须先执行：
+
+```bash
+rm -rf /tmp/jiti/
+openclaw gateway restart
+
+```
+
+因为 `jiti` 会缓存编译结果。你以为自己改了，实际上 OpenClaw 还在吃旧代码。这个坑不大，但特别恶心。
+
+![安装步骤流程图](https://virusoss.oss-cn-shanghai.aliyuncs.com/2.png)
+
+***
+
+## 四、安装完成后怎么验证
+
+### 1）检查插件是否加载成功
+
+```bash
+openclaw plugins list | grep memory
+
+```
+
+预期能看到：
+
+* `memory-lancedb-pro` 状态为 `loaded`
+
+### 2）检查 memory slot
+
+```bash
+openclaw config get plugins.slots.memory
+
+
+[plugins] memory-lancedb-pro@1.1.0: plugin registered (db: /Users/wxvirus/.openclaw/memory/lancedb-pro, model: jina-embeddings-v5-text-small)
+[plugins] session-strategy: using systemSessionMemory (plugin memory-reflection hooks disabled)
+│ Memory       │ memory-  │ loaded   │ ~/.openclaw/extensions/memory-lancedb-pro/index.ts           │ 1.1.0           │
+│ (LanceDB     │ lancedb- │          │ Enhanced LanceDB-backed long-term memory with hybrid         │                 │
+│ Memory       │ memory-  │ disabled │ stock:memory-core/index.ts                                   │ 2026.3.2        │
+│ (Core)       │ core     │          │ File-backed memory search tools and CLI                      │                 │
+│ @openclaw/   │ memory-  │ disabled │ stock:memory-lancedb/index.ts                                │ 2026.3.2        │
+│ memory-      │ lancedb  │          │ OpenClaw LanceDB-backed long-term memory plugin with auto-   │                 │
+```
+
+预期返回：
+
+```bash
+memory-lancedb-pro
+
+```
+
+### 3）测试写入记忆
+
+这次实际已经做了测试写入，内容大致是：
+
+* 成功安装 `memory-lancedb-pro`
+
+* 使用 Jina embedding 模型进行向量化存储
+
+### 4）测试检索记忆
+
+后续用关键词检索，成功召回了刚写入的测试记忆，说明下面几条链路都通了：
+
+* LanceDB 数据库创建成功
+
+* Embedding 正常
+
+* 存储正常
+
+* 检索正常
+
+* Rerank 正常
+
+也就是说，这插件不是"看起来装上了"，而是**确实跑起来了**。
+
+***
+
+## 五、这次替换飞书官方插件的过程
+
+这一段很关键，因为它也是这次真实踩坑的一部分。
+
+### 目标
+
+我们的目标不是"飞书全删掉重来"，而是：
+
+* 保留官方插件：`feishu-openclaw-plugin`
+
+* 去掉旧 `feishu` 插件配置
+
+* 保持飞书消息通道继续可用
+
+### 实际做了什么
+
+清理时主要动了这些：
+
+* 删除 `plugins.entries.feishu`
+
+* 删除 `plugins.installs.feishu`
+
+* 从 `plugins.allow` 中移除 `feishu`
+
+* 删除旧的 `~/.openclaw/feishu/` 目录缓存
+
+同时保留：
+
+* `plugins.entries.feishu-openclaw-plugin`
+
+* `plugins.installs.feishu-openclaw-plugin`
+
+* `plugins.allow` 中的 `feishu-openclaw-plugin`
+
+这部分本身没问题。
+
+### 真正踩坑的地方
+
+问题出在：**误删了 channels.feishu**。
+
+结果就是：
+
+* 官方插件还在
+
+* 飞书工具也还能注册
+
+* 但是飞书消息通道直接变成 `OFF`
+
+原因很简单，但非常容易搞混：
+
+* `plugins.entries.*` 管的是插件工具
+
+* `channels.*` 管的是消息通道
+
+也就是说：
+
+* `feishu-openclaw-plugin` 提供的是飞书工具能力
+
+* `channels.feishu` 提供的是飞书消息收发能力
+
+你把工具保留了，不代表消息通道就自动存在。
+
+这俩不是一回事。
+
+### 最终修复
+
+后来把 `channels.feishu` 重新加回配置里，飞书状态立刻恢复成：
+
+* `Feishu ON / OK`
+
+所以这次最终结论是：
+
+### 替换旧飞书插件的正确姿势
+
+* 保留 `feishu-openclaw-plugin`
+
+* 清理旧 `feishu` 的插件配置
+
+* **不要删 channels.feishu**
+
+* 如果误删了，就把 `channels.feishu` 配置补回去
+
+这事儿本质上不是插件失效，而是通道被自己手滑关了。
+
+程序员很多时候不是被 bug 打败，是被自己一顿配置乱砍打败的。
+
+![Plugin vs Channel 对比图](https://virusoss.oss-cn-shanghai.aliyuncs.com/3.png)
+
+***
+
+## 六、这次遇到的两个典型坑
+
+### 坑 1：插件显示 `disabled (not in allowlist)`
+
+**现象**：
+
+* 插件路径加了
+
+* `entries` 也配了
+
+* 但插件状态还是 disabled
+
+**原因**：
+
+没有加入 `plugins.allow`。
+
+**修复**：
+
+把插件 ID 加到 allowlist。
+
+***
+
+### 坑 2：换插件时把 channel 也删了
+
+**现象**：
+
+* 官方飞书插件已安装
+
+* 工具正常注册
+
+* 但飞书消息通道不可用
+
+**原因**：
+
+误删 `channels.feishu`。
+
+**修复**：
+
+重新添加 `channels.feishu` 配置。
+
+**经验**：
+
+以后清理插件配置时，必须明确区分：
+
+* Plugin = 工具能力
+
+* Channel = 消息通道
+
+别再一锅端了。锅端出去的时候，自己也跟着飞了。
+
+***
+
+## 七、安装完 `memory-lancedb-pro` 之后适合沉淀什么
+
+比较适合长期写进去的内容有：
+
+* 用户偏好
+
+* 重要事实
+
+* 技术坑点
+
+* 工程修复经验
+
+* 配置原则
+
+* 工作流规则
+
+* 可复用步骤
+
+比如这次就很适合沉淀这些：
+
+* 安装 OpenClaw 插件必须检查 `paths / entries / allow / slots`
+
+* 修改 `plugins/` 下 `.ts` 文件必须先清 `/tmp/jiti/`
+
+* 飞书插件替换时不要误删 `channels.feishu`
+
+* 每个教训都要做"双层记忆存储"
+
+这些东西只要沉淀进 LanceDB，后面再遇到相似问题，就能直接 recall 出来，不用重新摔。
+
+人类靠吃亏成长，AI 靠把吃过的亏写进去成长。都挺惨，但有用。
+
+***
+
+## 八、结论
+
+这次折腾下来，最有价值的不是"又装了一个插件"，而是把 OpenClaw 的长期能力补上了两块：
+
+### 1）长期记忆能力
+
+通过 `memory-lancedb-pro`：
+
+* 能存
+
+* 能找
+
+* 能重排
+
+* 能把经验变成后续决策依据
+
+### 2）插件配置认知更清晰
+
+通过这次替换飞书官方插件：
+
+* 明确了 plugin 和 channel 的边界
+
+* 明确了 allowlist 的必要性
+
+* 明确了 OpenClaw 插件安装的完整链路
+
+所以这篇文档本质上不是"安装说明"，而是一份**踩坑后整理出来的可复用实战手册**。
+
+如果你也在折腾 OpenClaw，建议把这种过程认真记下来。
+
+因为很多时候，真正值钱的不是最后那条命令，而是你中间摔过的那几跤。
+
+***
+
+## 九、飞书授权的关键步骤（必做！）
+
+这一步很容易被忽略，但**不做的话，很多飞书相关功能都用不了**。
+
+### 为什么需要授权
+
+当你安装了官方 `feishu-openclaw-plugin` 后，插件本身已经装上了，飞书工具也注册成功了。
+
+但是：
+
+* 创建飞书云文档
+
+* 读取飞书文档内容
+
+* 操作飞书日历、任务等
+
+这些功能都需要**以你的飞书用户身份执行**，而不是只靠机器人/应用身份。
+
+所以第一次使用这些功能时，必须完成一次 **飞书 OAuth 授权**。
+
+### 怎么授权
+
+**关键点：必须在飞书机器人对话里输入命令**
+
+不是在 Telegram 里，不是在终端里，而是：
+
+* 打开飞书客户端
+
+* 找到你的 OpenClaw 机器人
+
+* 在对话框里输入：
+
+```plain&#x20;text
+/feishu auth
+
+```
+
+* 机器人会返回一个授权链接
+
+* 点击链接，完成飞书 OAuth 授权流程
+
+* 授权完成后，回到机器人对话，确认授权成功
+
+### 如果不授权会怎样
+
+如果跳过这一步，你会遇到：
+
+* 创建飞书云文档时报错：`need_user_authorization`
+
+* 读取文档内容时报错：`unauthorized`
+
+* 其他飞书用户级操作都会失败
+
+看起来像是"插件没装好"或"权限没开全"，其实就是**用户授权这一步没做**。
+
+### 这次踩坑总结
+
+这次实际遇到的情况是：
+
+* 官方插件已安装 ✅
+
+* 飞书应用权限已开通 ✅
+
+* 飞书 channel 正常工作 ✅
+
+* 但创建文档一直报错 ❌
+
+最后发现：**就是因为没有完成用户授权**。
+
+完成 `/feishu auth` 后，立刻就能正常创建文档了。
+
+### 经验
+
+以后安装官方 `feishu-openclaw-plugin` 时，记得：
+
+* 安装插件
+
+* 配置 `openclaw.json`
+
+* 重启 Gateway
+
+* **在飞书机器人里执行 /feishu auth 完成授权** ← 这一步别忘了
+
+* 验证功能是否正常
+
+不要等到用的时候才发现没授权，那时候排查起来特别浪费时间。
+
+![飞书授权流程图](https://virusoss.oss-cn-shanghai.aliyuncs.com/4.png)
+
+***
+
+## 十、完整安装清单（防遗漏版）
+
+把前面所有步骤整理成一份完整清单，照着做不容易漏：
+
+### memory-lancedb-pro 安装
+
+* [ ] 在 `~/.openclaw/.env` 中配置 `JINA_API_KEY`
+
+* [ ] 克隆插件到 `~/.openclaw/extensions/memory-lancedb-pro`
+
+* [ ] `npm install` 安装依赖
+
+* [ ] 配置 `plugins.load.paths`
+
+* [ ] 配置 `plugins.entries.memory-lancedb-pro`
+
+* [ ] 添加到 `plugins.allow`
+
+* [ ] 设置 `plugins.slots.memory`
+
+* [ ] 禁用旧的 `memory-lancedb`
+
+* [ ] `openclaw gateway restart`
+
+* [ ] 验证插件状态为 `loaded`
+
+* [ ] 测试写入和检索记忆
+
+### 飞书官方插件替换
+
+* [ ] 保留 `feishu-openclaw-plugin`
+
+* [ ] 删除 `plugins.entries.feishu`
+
+* [ ] 删除 `plugins.installs.feishu`
+
+* [ ] 从 `plugins.allow` 移除 `feishu`
+
+* [ ] **保留 channels.feishu**（别删！）
+
+* [ ] 删除 `~/.openclaw/feishu/` 目录缓存
+
+* [ ] `openclaw gateway restart`
+
+* [ ] 验证飞书 channel 状态为 `ON / OK`
+
+* [ ] **在飞书机器人里执行 /feishu auth 完成授权**
+
+* [ ] 测试创建飞书云文档
+
+### 如果修改了插件 .ts 文件
+
+* [ ] `rm -rf /tmp/jiti/`
+
+* [ ] `openclaw gateway restart`
+
+***
+
+这份清单可以直接复制保存，下次再装类似插件时，照着走一遍就不容易漏步骤了。
+
+![完整安装清单](https://virusoss.oss-cn-shanghai.aliyuncs.com/5.png)
+
+***
+
+## 十一、飞书相关命令速查
+
+安装完官方 `feishu-openclaw-plugin` 后，可以在飞书机器人对话里使用这些命令：
+
+### 核心命令
+
+#### `/feishu auth`
+
+**用途**：完成飞书 OAuth 用户授权
+
+**使用场景**：
+
+* 第一次使用飞书文档、日历、任务等功能时
+
+* 遇到 `need_user_authorization` 错误时
+
+* 授权过期需要重新授权时
+
+**用法**：
+
+```plain&#x20;text
+/feishu auth
+
+```
+
+机器人会返回授权链接，点击完成授权流程。
+
+***
+
+#### `/feishu doctor`
+
+**用途**：诊断飞书插件状态和权限配置
+
+**使用场景**：
+
+* 检查飞书应用权限是否开通完整
+
+* 排查飞书功能不可用的原因
+
+* 验证用户授权状态
+
+* 查看插件配置是否正确
+
+**用法**：
+
+```plain&#x20;text
+/feishu doctor
+
+```
+
+**会检查什么**：
+
+* 飞书应用权限是否开通
+
+* 用户 OAuth 授权状态
+
+* 插件配置是否正确
+
+* Channel 状态是否正常
+
+* 各项功能是否可用
+
+**典型输出示例**：
+
+```plain&#x20;text
+✅ 飞书应用权限：已开通
+✅ 用户授权状态：已授权
+✅ 插件配置：正常
+✅ Channel 状态：ON / OK
+❌ 缺少权限：wiki:node:create
+
+建议：请在飞书开放平台补充缺失权限
+
+```
+
+***
+
+### 其他常用命令
+
+#### `/feishu status`
+
+查看飞书插件当前状态
+
+#### `/feishu help`
+
+查看所有可用的飞书命令
+
+***
+
+### 使用建议
+
+**安装后第一件事**：
+
+```plain&#x20;text
+/feishu doctor
+
+```
+
+先跑一遍诊断，确认：
+
+* 权限是否开通完整
+
+* 是否需要授权
+
+* 配置是否正确
+
+如果 doctor 提示需要授权，再执行：
+
+```plain&#x20;text
+/feishu auth
+
+```
+
+**遇到问题时**：
+
+不要盲目排查，先跑：
+
+```plain&#x20;text
+/feishu doctor
+
+```
+
+它会直接告诉你：
+
+* 是权限问题
+
+* 还是授权问题
+
+* 还是配置问题
+
+比自己瞎猜快多了。
+
+***
+
+### 这次踩坑的教训
+
+这次实际情况是：
+
+* 安装完插件后，直接就想创建文档
+
+* 结果一直报错 `need_user_authorization`
+
+* 排查了半天权限配置
+
+* 最后才发现：**根本没执行 /feishu auth**
+
+如果一开始就跑一遍 `/feishu doctor`，它会直接提示：
+
+```plain&#x20;text
+❌ 用户授权状态：未授权
+建议：请在飞书机器人里执行 /feishu auth
+
+```
+
+能省很多时间。
+
+***
+
+### 经验总结
+
+以后安装飞书相关插件时，记住这个顺序：
+
+* 安装插件
+
+* 配置 `openclaw.json`
+
+* 重启 Gateway
+
+* **在飞书机器人里执行 /feishu doctor** ← 先诊断
+
+* 根据诊断结果，该补权限补权限，该授权授权
+
+* 再次执行 `/feishu doctor` 确认全绿
+
+* 开始正常使用
+
+不要跳过第 4 步，别等出问题了再排查。
+
+***
+
+## 十二、权限开通清单
+
+如果 `/feishu doctor` 提示缺少权限，可以参考这份清单在飞书开放平台补齐：
+
+### 基础权限（必须）
+
+![基础权限开通](https://virusoss.oss-cn-shanghai.aliyuncs.com/6.png)
+
+```json
+{
+  "required": [
+    "application:application:self_manage",
+    "im:message",
+    "im:message:send_as_bot"
+  ]
+}
+
+```
+
+### 文档相关权限
+
+```json
+{
+  "document": [
+    "docx:document:create",
+    "docx:document:read",
+    "docx:document:write",
+    "wiki:node:create",
+    "wiki:node:read",
+    "board:whiteboard:node:create"
+  ]
+}
+
+```
+
+### 云空间权限
+
+```json
+{
+  "drive": [
+    "drive:drive:readonly",
+    "drive:drive:readwrite"
+  ]
+}
+
+```
+
+### 日历权限
+
+```json
+{
+  "calendar": [
+    "calendar:calendar:readonly",
+    "calendar:calendar:readwrite"
+  ]
+}
+
+```
+
+### 任务权限
+
+```json
+{
+  "task": [
+    "task:task:readonly",
+    "task:task:readwrite"
+  ]
+}
+
+```
+
+### 用户信息权限
+
+```json
+{
+  "user": [
+    "contact:user.base:readonly",
+    "contact:user.email:readonly"
+  ]
+}
+
+```
+
+***
+
+### 怎么知道该开通哪些权限
+
+**方法 1：看 /feishu doctor 的提示**
+
+它会直接告诉你缺哪些权限。
+
+**方法 2：按需开通**
+
+* 只用消息功能 → 开通基础权限
+
+* 要用文档功能 → 加上文档权限
+
+* 要用日历功能 → 加上日历权限
+
+不用一次性全开，用到哪个开哪个。
+
+**方法 3：遇到报错再补**
+
+如果遇到类似这样的报错：
+
+```plain&#x20;text
+应用缺少权限 [wiki:node:create]
+
+```
+
+就去开放平台补上 `wiki:node:create`。
+
+***
+
+这样整个飞书插件的安装、配置、授权、诊断流程就完整了。
