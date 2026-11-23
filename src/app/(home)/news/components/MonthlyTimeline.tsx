@@ -1,4 +1,4 @@
-import type { MonthlyData } from '../types'; // 导入类型定义
+import type { MonthlyData } from "../types"; // 导入类型定义
 
 // 月度时间轴组件的属性接口
 interface MonthlyTimelineProps {
@@ -11,27 +11,44 @@ interface MonthlyTimelineProps {
 export default function MonthlyTimeline({
   currentMonth,
   setCurrentMonth,
-  monthlyData
+  monthlyData,
 }: MonthlyTimelineProps) {
   // 月份名称数组
-  const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
-  
+  const monthNames = [
+    "1月",
+    "2月",
+    "3月",
+    "4月",
+    "5月",
+    "6月",
+    "7月",
+    "8月",
+    "9月",
+    "10月",
+    "11月",
+    "12月",
+  ];
+
   // 获取当前月份的数据
   const data = monthlyData[currentMonth];
   // 计算当月总热度积分
   const totalPoints = data.reduce((acc, item) => acc + item.points, 0);
-  
+
   // 格式化数字（添加千位分隔符）
-  const formatNum = (num: number) => new Intl.NumberFormat('en-US').format(num);
+  const formatNum = (num: number) => new Intl.NumberFormat("en-US").format(num);
 
   return (
     <section id="timeline" className="py-16 bg-white">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* 标题和描述区域 */}
         <div className="mb-10">
-          <h3 className="text-2xl font-bold text-stone-900 mb-3">月度时间轴：2025 足迹</h3>
+          <h3 className="text-2xl font-bold text-stone-900 mb-3">
+            月度时间轴：2025 足迹
+          </h3>
           <p className="text-stone-600 max-w-2xl">
-            点击下方月份，查看当月 Hacker News 热度最高的 5 个话题。这些话题构成了 2025 年技术界的底色，从早期的模型发布到年终的架构反思。
+            点击下方月份，查看当月 Hacker News 热度最高的 5
+            个话题。这些话题构成了 2025
+            年技术界的底色，从早期的模型发布到年终的架构反思。
           </p>
         </div>
 
@@ -40,15 +57,16 @@ export default function MonthlyTimeline({
           {monthNames.map((name, index) => {
             const mIdx = index + 1; // 月份索引（1-12）
             const isActive = mIdx === currentMonth; // 判断是否为当前选中月份
-            
+
             return (
               <button
+                type="button"
                 key={mIdx}
                 onClick={() => setCurrentMonth(mIdx)}
                 className={`flex-shrink-0 px-5 py-2 rounded-full border text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? 'bg-orange-600 text-white border-orange-600' // 激活状态样式
-                    : 'bg-white text-stone-600 border-stone-200 hover:border-orange-400' // 默认状态样式
+                    ? "bg-orange-600 text-white border-orange-600" // 激活状态样式
+                    : "bg-white text-stone-600 border-stone-200 hover:border-orange-400" // 默认状态样式
                 }`}
               >
                 {name}
@@ -68,18 +86,22 @@ export default function MonthlyTimeline({
               当月热度积分: {formatNum(totalPoints)}
             </span>
           </div>
-          
+
           {/* 月度话题列表 */}
           <div className="grid gap-4">
             {data.map((item, index) => (
-              <div
+              <button
+                type="button"
+                disabled={!item.isTop20}
                 key={item.id}
-                className="flex items-start gap-4 p-4 bg-white rounded-lg border border-stone-100 hover:border-orange-200 transition-colors group"
-                style={{ cursor: item.isTop20 ? 'pointer' : 'default' }} // Top 20 项目可点击
+                className="text-left flex items-start gap-4 p-4 bg-white rounded-lg border border-stone-100 hover:border-orange-200 transition-colors group"
+                style={{ cursor: item.isTop20 ? "pointer" : "default" }} // Top 20 项目可点击
                 onClick={() => {
                   // 如果是 Top 20 项目，点击后滚动到洞察区域
                   if (item.isTop20) {
-                    document.getElementById('insights')?.scrollIntoView({ behavior: 'smooth' });
+                    document
+                      .getElementById("insights")
+                      ?.scrollIntoView({ behavior: "smooth" });
                   }
                 }}
                 title={item.isTop20 ? "点击查看深度分析" : undefined}
@@ -108,7 +130,7 @@ export default function MonthlyTimeline({
                     )}
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -116,4 +138,3 @@ export default function MonthlyTimeline({
     </section>
   );
 }
-

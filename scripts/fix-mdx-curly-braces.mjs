@@ -6,15 +6,14 @@
  * 需要在表格、普通文本等地方转义花括号
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { join, extname } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { dirname, extname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const DOCS_DIR = join(__dirname, '../content/docs');
+const DOCS_DIR = join(__dirname, "../content/docs");
 
 /**
  * 转义表格中的花括号
@@ -22,7 +21,7 @@ const DOCS_DIR = join(__dirname, '../content/docs');
  */
 function escapeCurlyBracesInTables(content) {
   // 分行处理
-  const lines = content.split('\n');
+  const lines = content.split("\n");
   const result = [];
   let inTable = false;
 
@@ -30,7 +29,7 @@ function escapeCurlyBracesInTables(content) {
     const line = lines[i];
 
     // 检测是否在表格中(表格行包含 |)
-    if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+    if (line.trim().startsWith("|") && line.trim().endsWith("|")) {
       inTable = true;
 
       // 在表格行中转义花括号
@@ -39,30 +38,33 @@ function escapeCurlyBracesInTables(content) {
 
       // 转义表格单元格中的花括号,但保留代码块中的
       // 匹配模式: | cell content {something} more content |
-      processedLine = processedLine.replace(/\|([^|]*)\{([^}]+)\}([^|]*)\|/g, (match, before, inside, after) => {
-        // 检查是否在代码块中(` ` 包围)
-        const beforeBackticks = (before.match(/`/g) || []).length;
-        const afterBackticks = (after.match(/`/g) || []).length;
+      processedLine = processedLine.replace(
+        /\|([^|]*)\{([^}]+)\}([^|]*)\|/g,
+        (match, before, inside, after) => {
+          // 检查是否在代码块中(` ` 包围)
+          const beforeBackticks = (before.match(/`/g) || []).length;
+          const afterBackticks = (after.match(/`/g) || []).length;
 
-        // 如果前后反引号数量都是偶数,说明不在代码块中,需要转义
-        if (beforeBackticks % 2 === 0 && afterBackticks % 2 === 0) {
-          return `|${before}\\{${inside}\\}${after}|`;
-        }
+          // 如果前后反引号数量都是偶数,说明不在代码块中,需要转义
+          if (beforeBackticks % 2 === 0 && afterBackticks % 2 === 0) {
+            return `|${before}\\{${inside}\\}${after}|`;
+          }
 
-        return match;
-      });
+          return match;
+        },
+      );
 
       result.push(processedLine);
     } else {
       // 如果连续两行都不是表格行,认为表格结束
-      if (inTable && !line.trim().startsWith('|')) {
+      if (inTable && !line.trim().startsWith("|")) {
         inTable = false;
       }
       result.push(line);
     }
   }
 
-  return result.join('\n');
+  return result.join("\n");
 }
 
 /**
@@ -70,7 +72,7 @@ function escapeCurlyBracesInTables(content) {
  */
 function processFile(filepath) {
   try {
-    let content = readFileSync(filepath, 'utf-8');
+    let content = readFileSync(filepath, "utf-8");
     const originalContent = content;
 
     // 转义表格中的花括号
@@ -78,7 +80,7 @@ function processFile(filepath) {
 
     // 如果内容有变化,则写回文件
     if (content !== originalContent) {
-      writeFileSync(filepath, content, 'utf-8');
+      writeFileSync(filepath, content, "utf-8");
       console.log(`✓ 已修复: ${filepath}`);
       return true;
     }
@@ -102,7 +104,7 @@ function walkDirectory(dir, callback) {
 
     if (stat.isDirectory()) {
       walkDirectory(filepath, callback);
-    } else if (stat.isFile() && extname(file) === '.mdx') {
+    } else if (stat.isFile() && extname(file) === ".mdx") {
       callback(filepath);
     }
   }
@@ -112,7 +114,7 @@ function walkDirectory(dir, callback) {
  * 主函数
  */
 function main() {
-  console.log('开始修复 MDX 花括号转义...\n');
+  console.log("开始修复 MDX 花括号转义...\n");
   console.log(`目录: ${DOCS_DIR}\n`);
 
   let fixedCount = 0;

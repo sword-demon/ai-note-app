@@ -1,13 +1,13 @@
-'use client'; // 客户端组件
+"use client"; // 客户端组件
 
-import { useState, useEffect } from 'react'; // 导入 React hooks
-import { createPortal } from 'react-dom'; // 导入 Portal 用于模态框渲染
+import { useEffect, useState } from "react"; // 导入 React hooks
+import { createPortal } from "react-dom"; // 导入 Portal 用于模态框渲染
 
 // 图片预览模态框组件
 export function ImagePreviewModal({
   src,
   alt,
-  onClose
+  onClose,
 }: {
   src: string;
   alt: string;
@@ -16,46 +16,44 @@ export function ImagePreviewModal({
   // 使用 useEffect 处理键盘 ESC 关闭和滚动锁定
   useEffect(() => {
     // 禁止背景滚动
-    document.body.style.overflow = 'hidden';
-    
+    document.body.style.overflow = "hidden";
+
     // 添加 ESC 键监听
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     };
-    
-    document.addEventListener('keydown', handleEscape);
-    
+
+    document.addEventListener("keydown", handleEscape);
+
     // 清理函数
     return () => {
-      document.body.style.overflow = 'auto';
-      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = "auto";
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [onClose]);
 
-  // 处理背景点击关闭
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   // 使用 Portal 将模态框渲染到 body，避免 HTML 嵌套问题
-  if (typeof document === 'undefined') return null;
-  
+  if (typeof document === "undefined") return null;
+
   return createPortal(
-    <div
-      className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200"
-      onClick={handleBackdropClick}
-    >
+    <div className="fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
+      <button
+        type="button"
+        aria-label="关闭图片背景"
+        className="absolute inset-0"
+        onClick={onClose}
+      />
       {/* 关闭按钮 */}
       <button
+        type="button"
         onClick={onClose}
         className="absolute top-4 right-4 z-[101] text-white/80 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
         aria-label="关闭预览"
       >
         <svg
+          aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="32"
           height="32"
@@ -72,13 +70,12 @@ export function ImagePreviewModal({
       </button>
 
       {/* 图片容器 */}
-      <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+      <div className="pointer-events-none relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
+        {/* biome-ignore lint/performance/noImgElement: MDX 图片来源和尺寸不固定，预览需要原始图片。 */}
         <img
           src={src}
           alt={alt}
-          className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-300"
-          onClick={(e) => e.stopPropagation()}
+          className="pointer-events-auto max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-300"
         />
       </div>
 
@@ -94,48 +91,56 @@ export function ImagePreviewModal({
         点击图片外区域或按 ESC 关闭
       </div>
     </div>,
-    document.body // 渲染到 body，避免嵌套在 <p> 标签内
+    document.body, // 渲染到 body，避免嵌套在 <p> 标签内
   );
 }
 
 // 可点击的图片组件：用于 MDX 中覆盖默认的 img 标签
 export function ClickableImage({
   src,
-  alt = '',
+  alt = "",
   ...props
-}: React.ImgHTMLAttributes<HTMLImageElement>) {
+}: Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> & {
+  src?: string | { src: string };
+}) {
   // 状态：是否显示预览模态框
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   // 处理 src：可能是字符串或对象（Next.js 图片优化）
-  const imageSrc = typeof src === 'string' 
-    ? src 
-    : typeof src === 'object' && src !== null && 'src' in src 
-      ? (src as any).src 
-      : null;
+  const imageSrc =
+    typeof src === "string"
+      ? src
+      : typeof src === "object" && src !== null && "src" in src
+        ? src.src
+        : null;
 
   // 如果没有有效的 src，返回 null
-  if (!imageSrc || typeof imageSrc !== 'string') {
+  if (!imageSrc || typeof imageSrc !== "string") {
     return null;
   }
 
   return (
     <>
       {/* 可点击的图片 */}
-      <span className="inline-block cursor-zoom-in relative group my-4 max-w-full">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+      <button
+        type="button"
+        aria-label={alt ? `放大图片：${alt}` : "放大图片"}
+        onClick={() => setIsPreviewOpen(true)}
+        className="inline-block cursor-zoom-in relative group my-4 max-w-full"
+      >
+        {/* biome-ignore lint/performance/noImgElement: MDX 图片来源和尺寸不固定，预览需要原始图片。 */}
         <img
           {...props}
           src={imageSrc}
           alt={alt}
-          onClick={() => setIsPreviewOpen(true)}
-          className={`max-w-full h-auto rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${props.className || ''}`}
-          style={{ display: 'block' }}
+          className={`max-w-full h-auto rounded-lg shadow-md transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${props.className || ""}`}
+          style={{ display: "block" }}
         />
         {/* 悬停时显示放大提示 */}
         <span className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-all duration-300 rounded-lg pointer-events-none">
           <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 text-stone-800 px-3 py-1.5 rounded-full text-sm font-medium shadow-lg flex items-center gap-2">
             <svg
+              aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"
@@ -154,7 +159,7 @@ export function ClickableImage({
             点击放大
           </span>
         </span>
-      </span>
+      </button>
 
       {/* 图片预览模态框 */}
       {isPreviewOpen && (
@@ -167,4 +172,3 @@ export function ClickableImage({
     </>
   );
 }
-

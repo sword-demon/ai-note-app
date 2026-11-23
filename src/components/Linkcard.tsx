@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 interface LinkcardProps {
   url: string;
@@ -17,11 +17,8 @@ export function Linkcard({ url, title, description, logo }: LinkcardProps) {
     >
       <div className="flex items-start gap-3">
         {logo && (
-          <img
-            src={logo}
-            alt=""
-            className="h-8 w-8 rounded object-cover"
-          />
+          // biome-ignore lint/performance/noImgElement: 外链图标来源不固定，保留原生图片以支持任意 URL。
+          <img src={logo} alt="" className="h-8 w-8 rounded object-cover" />
         )}
         <div className="flex-1 min-w-0">
           <div className="font-medium text-foreground line-clamp-1">

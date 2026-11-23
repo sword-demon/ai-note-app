@@ -1,7 +1,7 @@
-@import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
-@plugin 'tailwindcss-animate';
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+@plugin "tailwindcss-animate";
 
 @theme {
   --spacing-page: 1436px;
@@ -45,12 +45,12 @@ body {
 
 /* 隐藏滚动条但保持滚动功能 */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE 和 Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE 和 Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari 和 Opera */
+  display: none; /* Chrome, Safari 和 Opera */
 }
 
 /* 文本行数限制 */
@@ -131,10 +131,15 @@ body {
 article img,
 .prose img,
 [data-docs-body] img {
+  /* biome-ignore lint/complexity/noImportantStyles: 保留现有 MDX 图片可见性覆盖，避免文档图片回归。 */
   display: block !important;
+  /* biome-ignore lint/complexity/noImportantStyles: 覆盖文档主题和图片内联尺寸，防止宽图溢出。 */
   max-width: 100% !important;
+  /* biome-ignore lint/complexity/noImportantStyles: 覆盖图片高度，保持原始比例。 */
   height: auto !important;
+  /* biome-ignore lint/complexity/noImportantStyles: 保留现有文档图片间距覆盖。 */
   margin-top: 1rem !important;
+  /* biome-ignore lint/complexity/noImportantStyles: 保留现有文档图片间距覆盖。 */
   margin-bottom: 1rem !important;
 }
 
@@ -142,6 +147,8 @@ article img,
 article span:has(> img),
 .prose span:has(> img),
 [data-docs-body] span:has(> img) {
+  /* biome-ignore lint/complexity/noImportantStyles: 保持图片预览包装在文档主题下的布局。 */
   display: inline-block !important;
+  /* biome-ignore lint/complexity/noImportantStyles: 覆盖文档主题和图片内联尺寸，防止宽图溢出。 */
   max-width: 100% !important;
 }

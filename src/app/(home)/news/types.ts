@@ -21,4 +21,3 @@ export interface DeepDiveItem {
 export interface DeepDiveData {
   [id: number]: DeepDiveItem;
 }
-

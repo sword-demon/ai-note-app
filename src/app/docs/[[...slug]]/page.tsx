@@ -1,17 +1,17 @@
-import { getPageImage, source, getLLMText } from '@/lib/source';
 import {
   DocsBody,
   DocsDescription,
   DocsPage,
   DocsTitle,
-} from 'fumadocs-ui/layouts/docs/page';
-import { notFound } from 'next/navigation';
-import { getMDXComponents } from '@/mdx-components';
-import type { Metadata } from 'next';
-import { createRelativeLink } from 'fumadocs-ui/mdx';
-import { CopyMarkdownButton, OpenButton } from './page.client';
+} from "fumadocs-ui/layouts/docs/page";
+import { createRelativeLink } from "fumadocs-ui/mdx";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getLLMText, getPageImage, source } from "@/lib/source";
+import { getMDXComponents } from "@/mdx-components";
+import { CopyMarkdownButton, OpenButton } from "./page.client";
 
-export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
+export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   const params = await props.params;
   const page = source.getPage(params.slug);
   if (!page) notFound();
@@ -47,7 +47,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  props: PageProps<'/docs/[[...slug]]'>,
+  props: PageProps<"/docs/[[...slug]]">,
 ): Promise<Metadata> {
   const params = await props.params;
   const page = source.getPage(params.slug);

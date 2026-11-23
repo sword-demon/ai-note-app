@@ -6,43 +6,42 @@
  * 2. 修复代码块语言标识: Plain -> text, Shell -> bash
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { join, extname } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { dirname, extname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const DOCS_DIR = join(__dirname, '../content/docs');
+const DOCS_DIR = join(__dirname, "../content/docs");
 
 // 语言映射表 (大写 -> 小写或正确的标识符)
 const LANGUAGE_MAP = {
-  'Plain': 'text',
-  'plain': 'text',
-  'Shell': 'bash',
-  'shell': 'bash',
-  'Bash': 'bash',
-  'PowerShell': 'powershell',
-  'Powershell': 'powershell',
-  'CSS': 'css',
-  'Markdown': 'markdown',
-  'markdown': 'md',
-  'Javascript': 'javascript',
-  'JavaScript': 'javascript',
-  'Typescript': 'typescript',
-  'TypeScript': 'typescript',
-  'Python': 'python',
-  'Java': 'java',
-  'Go': 'go',
-  'Rust': 'rust',
-  'C': 'c',
-  'Cpp': 'cpp',
-  'JSON': 'json',
-  'YAML': 'yaml',
-  'XML': 'xml',
-  'HTML': 'html',
-  'SQL': 'sql',
+  Plain: "text",
+  plain: "text",
+  Shell: "bash",
+  shell: "bash",
+  Bash: "bash",
+  PowerShell: "powershell",
+  Powershell: "powershell",
+  CSS: "css",
+  Markdown: "markdown",
+  markdown: "md",
+  Javascript: "javascript",
+  JavaScript: "javascript",
+  Typescript: "typescript",
+  TypeScript: "typescript",
+  Python: "python",
+  Java: "java",
+  Go: "go",
+  Rust: "rust",
+  C: "c",
+  Cpp: "cpp",
+  JSON: "json",
+  YAML: "yaml",
+  XML: "xml",
+  HTML: "html",
+  SQL: "sql",
 };
 
 /**
@@ -50,10 +49,16 @@ const LANGUAGE_MAP = {
  */
 function fixImagePaths(content) {
   // 修复 Markdown 图片语法: ![alt](../../public/image.png) -> ![alt](/image.png)
-  content = content.replace(/!\[([^\]]*)\]\(\.\.\/\.\.\/public\/([^)]+)\)/g, '![$1](/$2)');
+  content = content.replace(
+    /!\[([^\]]*)\]\(\.\.\/\.\.\/public\/([^)]+)\)/g,
+    "![$1](/$2)",
+  );
 
   // 修复 Markdown 图片语法: ![alt](/public/image.png) -> ![alt](/image.png)
-  content = content.replace(/!\[([^\]]*)\]\(\/public\/([^)]+)\)/g, '![$1](/$2)');
+  content = content.replace(
+    /!\[([^\]]*)\]\(\/public\/([^)]+)\)/g,
+    "![$1](/$2)",
+  );
 
   // 修复 HTML img 标签: <img src="../../public/image.png" /> -> <img src="/image.png" />
   content = content.replace(/src="\.\.\/\.\.\/public\/([^"]+)"/g, 'src="/$1"');
@@ -73,7 +78,7 @@ function fixCodeLanguages(content) {
 
   content = content.replace(codeBlockRegex, (match, lang) => {
     if (LANGUAGE_MAP[lang]) {
-      return '```' + LANGUAGE_MAP[lang];
+      return `\`\`\`${LANGUAGE_MAP[lang]}`;
     }
     return match;
   });
@@ -86,7 +91,7 @@ function fixCodeLanguages(content) {
  */
 function fixFile(filepath) {
   try {
-    let content = readFileSync(filepath, 'utf-8');
+    let content = readFileSync(filepath, "utf-8");
     const originalContent = content;
 
     // 修复图片路径
@@ -97,7 +102,7 @@ function fixFile(filepath) {
 
     // 如果内容有变化,则写回文件
     if (content !== originalContent) {
-      writeFileSync(filepath, content, 'utf-8');
+      writeFileSync(filepath, content, "utf-8");
       console.log(`✓ 已修复: ${filepath}`);
       return true;
     }
@@ -121,7 +126,7 @@ function walkDirectory(dir, callback) {
 
     if (stat.isDirectory()) {
       walkDirectory(filepath, callback);
-    } else if (stat.isFile() && extname(file) === '.mdx') {
+    } else if (stat.isFile() && extname(file) === ".mdx") {
       callback(filepath);
     }
   }
@@ -131,7 +136,7 @@ function walkDirectory(dir, callback) {
  * 主函数
  */
 function main() {
-  console.log('开始修复 MDX 文件...\n');
+  console.log("开始修复 MDX 文件...\n");
   console.log(`目录: ${DOCS_DIR}\n`);
 
   let fixedCount = 0;

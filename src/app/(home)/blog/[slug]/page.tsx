@@ -1,15 +1,16 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import type { Metadata } from "next";
 import { InlineTOC } from "fumadocs-ui/components/inline-toc";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { cn } from "@/lib/cn";
 import { blog } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
-import { cn } from "@/lib/cn";
 
 const buttonVariants = {
   base: "inline-flex items-center justify-center rounded-full font-medium transition-colors",
   sm: "px-4 py-2 text-sm",
-  secondary: "border bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent",
+  secondary:
+    "border bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent",
 };
 
 export default async function Page(props: {
@@ -32,7 +33,7 @@ export default async function Page(props: {
         <div>
           <p className="mb-1 text-sm text-fd-muted-foreground">发布于</p>
           <p className="font-medium">
-            {page.data.date ? new Date(page.data.date).toDateString() : ''}
+            {page.data.date ? new Date(page.data.date).toDateString() : ""}
           </p>
         </div>
       </div>
@@ -79,7 +80,7 @@ export async function generateMetadata(props: {
 export function generateStaticParams(): { slug: string }[] {
   return blog.getPages().map((page) => {
     // 从 URL 中提取 slug: /blog/slug-name -> slug-name
-    const slug = page.url.split('/').pop() || '';
+    const slug = page.url.split("/").pop() || "";
     return { slug };
   });
 }

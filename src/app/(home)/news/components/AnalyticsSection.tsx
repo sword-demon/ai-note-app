@@ -1,8 +1,8 @@
-'use client'; // 客户端组件
+"use client"; // 客户端组件
 
-import { useEffect, useRef } from 'react'; // 导入 React hooks
-import { Chart, registerables } from 'chart.js'; // 导入 Chart.js
-import type { MonthlyData } from '../types'; // 导入类型定义
+import { Chart, registerables } from "chart.js"; // 导入 Chart.js
+import { useEffect, useRef } from "react"; // 导入 React hooks
+import type { MonthlyData } from "../types"; // 导入类型定义
 
 // 注册 Chart.js 所有组件
 Chart.register(...registerables);
@@ -13,7 +13,9 @@ interface AnalyticsSectionProps {
 }
 
 // 数据分析图表组件
-export default function AnalyticsSection({ monthlyData }: AnalyticsSectionProps) {
+export default function AnalyticsSection({
+  monthlyData,
+}: AnalyticsSectionProps) {
   // 创建 canvas 元素的引用
   const categoryChartRef = useRef<HTMLCanvasElement>(null); // 分类饼图引用
   const trendChartRef = useRef<HTMLCanvasElement>(null); // 趋势折线图引用
@@ -34,12 +36,25 @@ export default function AnalyticsSection({ monthlyData }: AnalyticsSectionProps)
     // 准备数据
     const categories: Record<string, number> = {}; // 分类统计
     const monthlyPoints: number[] = []; // 每月平均热度
-    const months = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+    const months = [
+      "1月",
+      "2月",
+      "3月",
+      "4月",
+      "5月",
+      "6月",
+      "7月",
+      "8月",
+      "9月",
+      "10月",
+      "11月",
+      "12月",
+    ];
 
     // 遍历所有月份数据
-    Object.keys(monthlyData).forEach(m => {
+    Object.keys(monthlyData).forEach((m) => {
       let mPoints = 0; // 当月总热度
-      monthlyData[Number(m)].forEach(item => {
+      monthlyData[Number(m)].forEach((item) => {
         // 统计分类
         categories[item.category] = (categories[item.category] || 0) + 1;
         mPoints += item.points;
@@ -48,53 +63,57 @@ export default function AnalyticsSection({ monthlyData }: AnalyticsSectionProps)
     });
 
     // 创建分类分布饼图
-    const ctx1 = categoryChartRef.current.getContext('2d');
+    const ctx1 = categoryChartRef.current.getContext("2d");
     if (ctx1) {
       chartInstancesRef.current.category = new Chart(ctx1, {
-        type: 'doughnut', // 环形图
+        type: "doughnut", // 环形图
         data: {
           labels: Object.keys(categories), // 分类名称
-          datasets: [{
-            data: Object.values(categories), // 分类数量
-            backgroundColor: [
-              '#ea580c', // AI - 橙色
-              '#3b82f6', // Dev - 蓝色
-              '#22c55e', // Tech - 绿色
-              '#a855f7', // Society - 紫色
-              '#64748b'  // Business - 灰色
-            ],
-            borderWidth: 0 // 无边框
-          }]
+          datasets: [
+            {
+              data: Object.values(categories), // 分类数量
+              backgroundColor: [
+                "#ea580c", // AI - 橙色
+                "#3b82f6", // Dev - 蓝色
+                "#22c55e", // Tech - 绿色
+                "#a855f7", // Society - 紫色
+                "#64748b", // Business - 灰色
+              ],
+              borderWidth: 0, // 无边框
+            },
+          ],
         },
         options: {
           responsive: true, // 响应式
           maintainAspectRatio: false, // 不保持宽高比
           plugins: {
             legend: {
-              position: 'right' // 图例位置在右侧
-            }
-          }
-        }
+              position: "right", // 图例位置在右侧
+            },
+          },
+        },
       });
     }
 
     // 创建月度热度趋势折线图
-    const ctx2 = trendChartRef.current.getContext('2d');
+    const ctx2 = trendChartRef.current.getContext("2d");
     if (ctx2) {
       chartInstancesRef.current.trend = new Chart(ctx2, {
-        type: 'line', // 折线图
+        type: "line", // 折线图
         data: {
           labels: months, // 月份名称
-          datasets: [{
-            label: '平均热度 (Points)', // 数据集标签
-            data: monthlyPoints, // 月度平均热度数据
-            borderColor: '#ea580c', // 线条颜色：橙色
-            backgroundColor: 'rgba(234, 88, 12, 0.1)', // 填充颜色：半透明橙色
-            fill: true, // 填充区域
-            tension: 0.4, // 曲线张力（平滑度）
-            pointRadius: 4, // 数据点半径
-            pointHoverRadius: 6 // 悬停时数据点半径
-          }]
+          datasets: [
+            {
+              label: "平均热度 (Points)", // 数据集标签
+              data: monthlyPoints, // 月度平均热度数据
+              borderColor: "#ea580c", // 线条颜色：橙色
+              backgroundColor: "rgba(234, 88, 12, 0.1)", // 填充颜色：半透明橙色
+              fill: true, // 填充区域
+              tension: 0.4, // 曲线张力（平滑度）
+              pointRadius: 4, // 数据点半径
+              pointHoverRadius: 6, // 悬停时数据点半径
+            },
+          ],
         },
         options: {
           responsive: true, // 响应式
@@ -103,26 +122,25 @@ export default function AnalyticsSection({ monthlyData }: AnalyticsSectionProps)
             y: {
               beginAtZero: false, // Y 轴不从 0 开始
               grid: {
-                color: '#e5e7eb' // 网格线颜色
-              }
+                color: "#e5e7eb", // 网格线颜色
+              },
             },
             x: {
               grid: {
-                display: false // 不显示 X 轴网格线
-              }
-            }
+                display: false, // 不显示 X 轴网格线
+              },
+            },
           },
           plugins: {
             tooltip: {
               callbacks: {
                 // 自定义提示框标签格式
-                label: function(context) {
-                  return (context.parsed.y ?? 0).toFixed(0) + " Points";
-                }
-              }
-            }
-          }
-        }
+                label: (context) =>
+                  `${(context.parsed.y ?? 0).toFixed(0)} Points`,
+              },
+            },
+          },
+        },
       });
     }
 
@@ -142,9 +160,12 @@ export default function AnalyticsSection({ monthlyData }: AnalyticsSectionProps)
       <div className="container mx-auto px-4 max-w-6xl">
         {/* 标题和描述 */}
         <div className="mb-12">
-          <h3 className="text-2xl font-bold text-stone-900 mb-3">2025 数据全景</h3>
+          <h3 className="text-2xl font-bold text-stone-900 mb-3">
+            2025 数据全景
+          </h3>
           <p className="text-stone-600">
-            通过数据可视化，我们可以看到 2025 年技术关注点的结构性转移。AI 依然强势，但基础设施与能源话题的崛起不容忽视。
+            通过数据可视化，我们可以看到 2025 年技术关注点的结构性转移。AI
+            依然强势，但基础设施与能源话题的崛起不容忽视。
           </p>
         </div>
 
@@ -184,4 +205,3 @@ export default function AnalyticsSection({ monthlyData }: AnalyticsSectionProps)
     </section>
   );
 }
-

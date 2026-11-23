@@ -9,19 +9,26 @@
  * 4. 不修改源文件
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync } from 'fs';
-import { join, dirname, relative, extname, basename } from 'path';
-import { fileURLToPath } from 'url';
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
+import { basename, dirname, extname, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // 配置路径
-const SOURCE_DIR = '/Users/wxvirus/WebStormProjects/vitepressDocs/docs';
-const TARGET_DIR = join(__dirname, '../content/docs');
+const SOURCE_DIR = "/Users/wxvirus/WebStormProjects/vitepressDocs/docs";
+const TARGET_DIR = join(__dirname, "../content/docs");
 
 // 需要排除的文件
-const EXCLUDE_FILES = ['index.md'];
+const EXCLUDE_FILES = ["index.md"];
 
 /**
  * 解析 frontmatter
@@ -39,10 +46,10 @@ function parseFrontmatter(content) {
 
   // 解析 YAML frontmatter (简单实现)
   const frontmatter = {};
-  const lines = frontmatterText.split('\n');
+  const lines = frontmatterText.split("\n");
 
   for (const line of lines) {
-    const colonIndex = line.indexOf(':');
+    const colonIndex = line.indexOf(":");
     if (colonIndex === -1) continue;
 
     const key = line.slice(0, colonIndex).trim();
@@ -74,8 +81,8 @@ function convertToFumadocsFrontmatter(frontmatter, filepath) {
 
   // 如果没有 title,从内容的第一个标题提取或使用文件名
   if (!fumadocsFrontmatter.title) {
-    const filename = basename(filepath, '.md');
-    fumadocsFrontmatter.title = filename.replace(/_/g, ' ');
+    const filename = basename(filepath, ".md");
+    fumadocsFrontmatter.title = filename.replace(/_/g, " ");
   }
 
   return fumadocsFrontmatter;
@@ -94,7 +101,7 @@ function extractTitleFromContent(content) {
  */
 function generateMdxFrontmatter(frontmatter) {
   const lines = [];
-  lines.push('---');
+  lines.push("---");
 
   if (frontmatter.title) {
     lines.push(`title: ${frontmatter.title}`);
@@ -104,10 +111,10 @@ function generateMdxFrontmatter(frontmatter) {
     lines.push(`description: ${frontmatter.description}`);
   }
 
-  lines.push('---');
-  lines.push('');
+  lines.push("---");
+  lines.push("");
 
-  return lines.join('\n');
+  return lines.join("\n");
 }
 
 /**
@@ -116,13 +123,16 @@ function generateMdxFrontmatter(frontmatter) {
 function processFile(sourcePath, targetPath) {
   try {
     // 读取文件内容
-    const content = readFileSync(sourcePath, 'utf-8');
+    const content = readFileSync(sourcePath, "utf-8");
 
     // 解析 frontmatter
     const { frontmatter, content: body } = parseFrontmatter(content);
 
     // 转换为 Fumadocs frontmatter
-    const fumadocsFrontmatter = convertToFumadocsFrontmatter(frontmatter, sourcePath);
+    const fumadocsFrontmatter = convertToFumadocsFrontmatter(
+      frontmatter,
+      sourcePath,
+    );
 
     // 如果没有 title,尝试从内容中提取
     if (!fumadocsFrontmatter.title) {
@@ -143,9 +153,11 @@ function processFile(sourcePath, targetPath) {
     }
 
     // 写入文件
-    writeFileSync(targetPath, mdxContent, 'utf-8');
+    writeFileSync(targetPath, mdxContent, "utf-8");
 
-    console.log(`✓ ${relative(SOURCE_DIR, sourcePath)} -> ${relative(TARGET_DIR, targetPath)}`);
+    console.log(
+      `✓ ${relative(SOURCE_DIR, sourcePath)} -> ${relative(TARGET_DIR, targetPath)}`,
+    );
     return true;
   } catch (error) {
     console.error(`✗ 处理文件失败: ${sourcePath}`, error.message);
@@ -165,10 +177,10 @@ function walkDirectory(dir, callback) {
 
     if (stat.isDirectory()) {
       // 跳过 public 目录
-      if (file === 'public') continue;
+      if (file === "public") continue;
 
       walkDirectory(filepath, callback);
-    } else if (stat.isFile() && extname(file) === '.md') {
+    } else if (stat.isFile() && extname(file) === ".md") {
       // 跳过排除的文件
       if (EXCLUDE_FILES.includes(file)) continue;
 
@@ -181,7 +193,7 @@ function walkDirectory(dir, callback) {
  * 主函数
  */
 function main() {
-  console.log('开始迁移文档...\n');
+  console.log("开始迁移文档...\n");
   console.log(`源目录: ${SOURCE_DIR}`);
   console.log(`目标目录: ${TARGET_DIR}\n`);
 
@@ -194,7 +206,7 @@ function main() {
     const relativePath = relative(SOURCE_DIR, sourcePath);
 
     // 生成目标路径 (.md -> .mdx)
-    const targetPath = join(TARGET_DIR, relativePath.replace(/\.md$/, '.mdx'));
+    const targetPath = join(TARGET_DIR, relativePath.replace(/\.md$/, ".mdx"));
 
     // 处理文件
     if (processFile(sourcePath, targetPath)) {

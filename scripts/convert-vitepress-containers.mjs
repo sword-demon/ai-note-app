@@ -13,24 +13,23 @@
  * </Callout>
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { join, extname } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { dirname, extname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const DOCS_DIR = join(__dirname, '../content/docs');
+const DOCS_DIR = join(__dirname, "../content/docs");
 
 // VitePress 容器类型映射到 Fumadocs Callout 类型
 const TYPE_MAP = {
-  'info': 'info',
-  'tip': 'tip',
-  'warning': 'warning',
-  'danger': 'error',
-  'details': 'note',
-  'note': 'note',
+  info: "info",
+  tip: "tip",
+  warning: "warning",
+  danger: "error",
+  details: "note",
+  note: "note",
 };
 
 /**
@@ -40,12 +39,12 @@ function convertContainers(content) {
   // 匹配 VitePress 容器: :::type title\n内容\n:::
   const containerRegex = /^:::(\w+)(?:\s+(.+?))?\s*\n([\s\S]*?)\n:::/gm;
 
-  content = content.replace(containerRegex, (match, type, title, body) => {
+  content = content.replace(containerRegex, (_match, type, title, body) => {
     // 映射类型
-    const calloutType = TYPE_MAP[type.toLowerCase()] || 'info';
+    const calloutType = TYPE_MAP[type.toLowerCase()] || "info";
 
     // 构建 Callout 组件
-    const titleAttr = title ? ` title="${title.trim()}"` : '';
+    const titleAttr = title ? ` title="${title.trim()}"` : "";
 
     return `<Callout type="${calloutType}"${titleAttr}>\n${body.trim()}\n</Callout>`;
   });
@@ -58,7 +57,7 @@ function convertContainers(content) {
  */
 function processFile(filepath) {
   try {
-    let content = readFileSync(filepath, 'utf-8');
+    let content = readFileSync(filepath, "utf-8");
     const originalContent = content;
 
     // 转换容器
@@ -66,7 +65,7 @@ function processFile(filepath) {
 
     // 如果内容有变化,则写回文件
     if (content !== originalContent) {
-      writeFileSync(filepath, content, 'utf-8');
+      writeFileSync(filepath, content, "utf-8");
       console.log(`✓ 已转换: ${filepath}`);
       return true;
     }
@@ -90,7 +89,7 @@ function walkDirectory(dir, callback) {
 
     if (stat.isDirectory()) {
       walkDirectory(filepath, callback);
-    } else if (stat.isFile() && extname(file) === '.mdx') {
+    } else if (stat.isFile() && extname(file) === ".mdx") {
       callback(filepath);
     }
   }
@@ -100,7 +99,7 @@ function walkDirectory(dir, callback) {
  * 主函数
  */
 function main() {
-  console.log('开始转换 VitePress 容器...\n');
+  console.log("开始转换 VitePress 容器...\n");
   console.log(`目录: ${DOCS_DIR}\n`);
 
   let convertedCount = 0;

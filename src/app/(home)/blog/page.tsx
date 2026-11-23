@@ -1,15 +1,13 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { blog } from "@/lib/source";
 
 export default function Page() {
-  const posts = [...blog.getPages()].sort(
-    (a, b) => {
-      const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
-      const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
-      return dateB - dateA;
-    },
-  );
+  const posts = [...blog.getPages()].sort((a, b) => {
+    const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+    const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+    return dateB - dateA;
+  });
 
   return (
     <main className="mx-auto w-full max-w-page px-4 pb-12 md:py-12">
@@ -46,7 +44,7 @@ export default function Page() {
             </p>
 
             <p className="mt-auto pt-4 text-xs text-brand">
-              {post.data.date ? new Date(post.data.date).toDateString() : ''}
+              {post.data.date ? new Date(post.data.date).toDateString() : ""}
             </p>
           </Link>
         ))}

@@ -1,4 +1,4 @@
-import { createMDX } from 'fumadocs-mdx/next';
+import { createMDX } from "fumadocs-mdx/next";
 
 const withMDX = createMDX();
 
@@ -14,9 +14,7 @@ const config = {
   },
 
   // 优化外部包处理
-  serverExternalPackages: [
-    'shiki',
-  ],
+  serverExternalPackages: ["shiki"],
 
   // 可选:添加重定向规则
   // async redirects() {

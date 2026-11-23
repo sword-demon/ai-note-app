@@ -1,19 +1,19 @@
-'use client'; // 客户端组件，因为需要使用状态和交互
+"use client"; // 客户端组件，因为需要使用状态和交互
 
-import { useState } from 'react'; // 导入 React 的 useState hook 用于状态管理
-import MonthlyTimeline from './components/MonthlyTimeline'; // 月度时间轴组件
-import InsightsGrid from './components/InsightsGrid'; // Top 20 洞察网格组件
-import AnalyticsSection from './components/AnalyticsSection'; // 数据分析图表组件
-import InsightModal from './components/InsightModal'; // 洞察详情模态框组件
-import { monthlyData, deepDiveData } from './data/hackerNewsData'; // 导入数据
-import type { MonthlyItem } from './types'; // 导入类型定义
+import { useState } from "react"; // 导入 React 的 useState hook 用于状态管理
+import AnalyticsSection from "./components/AnalyticsSection"; // 数据分析图表组件
+import InsightModal from "./components/InsightModal"; // 洞察详情模态框组件
+import InsightsGrid from "./components/InsightsGrid"; // Top 20 洞察网格组件
+import MonthlyTimeline from "./components/MonthlyTimeline"; // 月度时间轴组件
+import { deepDiveData, monthlyData } from "./data/hackerNewsData"; // 导入数据
+import type { MonthlyItem } from "./types"; // 导入类型定义
 
 // 导出默认的新闻页面组件
 export default function NewsPage() {
   // 状态：当前选中的月份（默认为 1 月）
   const [currentMonth, setCurrentMonth] = useState(1);
   // 状态：当前激活的分类筛选（默认为 'all' 全部）
-  const [activeCategoryFilter, setActiveCategoryFilter] = useState('all');
+  const [activeCategoryFilter, setActiveCategoryFilter] = useState("all");
   // 状态：模态框中显示的项目（null 表示模态框关闭）
   const [modalItem, setModalItem] = useState<MonthlyItem | null>(null);
 
@@ -33,13 +33,22 @@ export default function NewsPage() {
           </div>
           {/* 导航链接：在中大屏幕显示 */}
           <nav className="hidden md:flex gap-6 text-sm font-medium text-stone-600">
-            <a href="#timeline" className="hover:text-orange-600 transition-colors">
+            <a
+              href="#timeline"
+              className="hover:text-orange-600 transition-colors"
+            >
               月度时间轴
             </a>
-            <a href="#insights" className="hover:text-orange-600 transition-colors">
+            <a
+              href="#insights"
+              className="hover:text-orange-600 transition-colors"
+            >
               年度 Top 20 深度洞察
             </a>
-            <a href="#analytics" className="hover:text-orange-600 transition-colors">
+            <a
+              href="#analytics"
+              className="hover:text-orange-600 transition-colors"
+            >
               数据趋势
             </a>
           </nav>
@@ -59,21 +68,36 @@ export default function NewsPage() {
           </h2>
           {/* 描述文本 */}
           <p className="text-lg md:text-xl text-stone-600 mb-8 leading-relaxed">
-            本交互式报告基于 Hacker News 全年数据，精选了每月的 Top 5 热门话题，并从年度 Top 60 中提炼出 20 个最具代表性的技术转折点。探索这一年 AI 的落地、开源的韧性以及计算范式的转移。
+            本交互式报告基于 Hacker News 全年数据，精选了每月的 Top 5
+            热门话题，并从年度 Top 60 中提炼出 20
+            个最具代表性的技术转折点。探索这一年 AI
+            的落地、开源的韧性以及计算范式的转移。
           </p>
           {/* 统计数据卡片 */}
           <div className="flex flex-wrap justify-center gap-4">
             <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-stone-200">
-              <span className="block text-2xl font-bold text-stone-900">142k+</span>
-              <span className="text-xs text-stone-500 uppercase tracking-wide">总主要讨论</span>
+              <span className="block text-2xl font-bold text-stone-900">
+                142k+
+              </span>
+              <span className="text-xs text-stone-500 uppercase tracking-wide">
+                总主要讨论
+              </span>
             </div>
             <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-stone-200">
-              <span className="block text-2xl font-bold text-orange-600">60</span>
-              <span className="text-xs text-stone-500 uppercase tracking-wide">关键节点收录</span>
+              <span className="block text-2xl font-bold text-orange-600">
+                60
+              </span>
+              <span className="text-xs text-stone-500 uppercase tracking-wide">
+                关键节点收录
+              </span>
             </div>
             <div className="bg-white px-6 py-3 rounded-lg shadow-sm border border-stone-200">
-              <span className="block text-2xl font-bold text-stone-900">20</span>
-              <span className="text-xs text-stone-500 uppercase tracking-wide">深度分析</span>
+              <span className="block text-2xl font-bold text-stone-900">
+                20
+              </span>
+              <span className="text-xs text-stone-500 uppercase tracking-wide">
+                深度分析
+              </span>
             </div>
           </div>
         </div>
@@ -105,7 +129,8 @@ export default function NewsPage() {
             Hacker News 2025 Year in Review
           </p>
           <p className="text-sm max-w-md mx-auto mb-8">
-            本页面通过模拟数据展示了 2025 年的科技趋势。所有数据点均为基于当前技术发展路径的合理推演，旨在提供一个沉浸式的未来回顾体验。
+            本页面通过模拟数据展示了 2025
+            年的科技趋势。所有数据点均为基于当前技术发展路径的合理推演，旨在提供一个沉浸式的未来回顾体验。
           </p>
           <div className="text-xs text-stone-600">
             Generated by AI Note • 2026 Edition
@@ -122,4 +147,3 @@ export default function NewsPage() {
     </div>
   );
 }
-
