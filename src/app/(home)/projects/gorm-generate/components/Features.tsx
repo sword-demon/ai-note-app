@@ -35,7 +35,7 @@ export function Features() {
   return (
     <section className="border-t border-fd-border py-14 md:py-20">
       <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-fd-foreground/60">
-        02 / Capabilities
+        03 / Capabilities
       </p>
       <h2 className="mt-3 max-w-2xl text-balance text-3xl font-semibold tracking-tight md:text-4xl">
         少写样板，保留该写的业务
@@ -46,7 +46,7 @@ export function Features() {
             key={feature.title}
             className="rounded-xl border border-fd-border bg-fd-card p-6"
           >
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-fd-foreground/55">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-fd-foreground/70">
               {feature.label}
             </p>
             <h3 className="mt-4 text-base font-semibold">{feature.title}</h3>

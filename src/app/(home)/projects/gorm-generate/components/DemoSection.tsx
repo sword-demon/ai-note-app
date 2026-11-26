@@ -76,7 +76,7 @@ export async function DemoSection() {
                   <CodeBlockTabsTrigger
                     key={file.kind}
                     value={file.kind}
-                    className="py-3 font-mono text-xs text-fd-foreground data-[state=active]:text-fd-foreground"
+                    className="py-3 font-mono text-xs text-fd-foreground data-[state=active]:text-fd-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-fd-foreground"
                   >
                     {file.label}
                   </CodeBlockTabsTrigger>

@@ -4,7 +4,7 @@ const REPO_URL = "https://github.com/sword-demon/gorm-generate";
 const RELEASES_URL = `${REPO_URL}/releases/latest`;
 
 const ctaClass =
-  "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-brand px-5 text-sm font-semibold text-brand-ink transition-colors hover:bg-brand/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-foreground";
+  "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-brand px-5 text-sm font-semibold text-brand-ink transition-colors motion-reduce:transition-none hover:bg-brand/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-foreground";
 
 const packageRows = [
   { chip: "aarch64", label: "Apple Silicon（M 系列）" },
@@ -51,8 +51,7 @@ export function DownloadSection() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Github className="size-4" aria-hidden />
-              在 GitHub 查看
+              <Github className="size-4" aria-hidden />在 GitHub 查看
             </a>
           </div>
           <ul className="mt-7 divide-y divide-fd-border border-y border-fd-border">
@@ -73,8 +72,8 @@ export function DownloadSection() {
         <div className="rounded-xl border border-fd-border bg-fd-card p-6">
           <h3 className="text-sm font-semibold">未签名应用的首次打开</h3>
           <p className="mt-2 text-sm leading-7 text-fd-foreground/75">
-            当前安装包没有 Apple 开发者签名，macOS 会默认拦截。按下面三步放行即可，不需要关闭
-            Gatekeeper。
+            当前安装包没有 Apple 开发者签名，macOS
+            会默认拦截。按下面三步放行即可，不需要关闭 Gatekeeper。
           </p>
           <ol className="mt-4 space-y-3">
             {gatekeeperSteps.map((step, index) => (
