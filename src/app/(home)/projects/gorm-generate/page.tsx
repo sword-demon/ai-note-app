@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DemoSection } from "./components/DemoSection";
 import { DownloadSection } from "./components/DownloadSection";
 import { Features } from "./components/Features";
 import { Hero } from "./components/Hero";
@@ -17,6 +18,7 @@ export default function Page() {
     <div lang="zh-CN" className="flex flex-1 flex-col">
       <div className="mx-auto w-full max-w-page px-4 pb-16">
         <Hero />
+        <DemoSection />
         <Pipeline />
         <Features />
         <Limits />
