@@ -1,10 +1,5 @@
-import { Download, Github } from "lucide-react";
-
-const REPO_URL = "https://github.com/sword-demon/gorm-generate";
-const RELEASES_URL = `${REPO_URL}/releases/latest`;
-
-const ctaClass =
-  "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-brand px-5 text-sm font-semibold text-brand-ink transition-colors motion-reduce:transition-none hover:bg-brand/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-foreground";
+import { ProjectCtas } from "./ProjectCtas";
+import { Eyebrow, Section } from "./Section";
 
 const packageRows = [
   { chip: "aarch64", label: "Apple Silicon（M 系列）" },
@@ -19,12 +14,10 @@ const gatekeeperSteps = [
 
 export function DownloadSection() {
   return (
-    <section className="border-t border-fd-border py-14 md:py-20">
+    <Section>
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-fd-foreground/60">
-            Download
-          </p>
+          <Eyebrow>Download</Eyebrow>
           <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight md:text-4xl">
             下载，然后粘一张表
           </h2>
@@ -36,23 +29,7 @@ export function DownloadSection() {
             文件，并且只从本项目的 GitHub Releases 下载，不要使用第三方镜像。
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <a
-              className={ctaClass}
-              href={RELEASES_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Download className="size-4" aria-hidden />
-              下载 macOS 版
-            </a>
-            <a
-              className={ctaClass}
-              href={REPO_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github className="size-4" aria-hidden />在 GitHub 查看
-            </a>
+            <ProjectCtas />
           </div>
           <ul className="mt-7 divide-y divide-fd-border border-y border-fd-border">
             {packageRows.map((row) => (
@@ -87,6 +64,6 @@ export function DownloadSection() {
           </ol>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

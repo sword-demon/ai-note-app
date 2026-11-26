@@ -1,3 +1,5 @@
+import { Eyebrow, Section } from "./Section";
+
 const limits = [
   "只解析 CREATE TABLE 与 COMMENT ON，其他 DDL 不会进入生成流程。",
   "方言必须与脚本一致：MySQL 脚本配 MySQL，PostgreSQL 配 PostgreSQL。",
@@ -7,12 +9,10 @@ const limits = [
 
 export function Limits() {
   return (
-    <section className="border-t border-fd-border py-14 md:py-20">
+    <Section>
       <div className="grid gap-8 rounded-xl border border-fd-border bg-fd-card p-6 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:p-10">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-fd-foreground/60">
-            03 / Boundaries
-          </p>
+          <Eyebrow>04 / Boundaries</Eyebrow>
           <h2 className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl">
             它不做什么
           </h2>
@@ -26,12 +26,15 @@ export function Limits() {
               key={limit}
               className="flex gap-3 py-3 text-sm leading-7 text-fd-foreground/80"
             >
-              <span aria-hidden className="mt-3 size-1.5 shrink-0 rounded-full bg-brand" />
+              <span
+                aria-hidden
+                className="mt-3 size-1.5 shrink-0 rounded-full bg-brand"
+              />
               <span>{limit}</span>
             </li>
           ))}
         </ul>
       </div>
-    </section>
+    </Section>
   );
 }

@@ -1,4 +1,4 @@
-const REPO_URL = "https://github.com/sword-demon/gorm-generate";
+import { REPO_URL } from "../data/links";
 
 export function SiteFooter() {
   return (
@@ -13,7 +13,7 @@ export function SiteFooter() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          github.com/sword-demon/gorm-generate
+          {REPO_URL.replace("https://", "")}
         </a>
       </div>
     </footer>

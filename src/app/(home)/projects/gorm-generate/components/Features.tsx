@@ -1,3 +1,5 @@
+import { Eyebrow, Section } from "./Section";
+
 const features = [
   {
     label: "DIALECT",
@@ -33,10 +35,8 @@ const features = [
 
 export function Features() {
   return (
-    <section className="border-t border-fd-border py-14 md:py-20">
-      <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-fd-foreground/60">
-        03 / Capabilities
-      </p>
+    <Section>
+      <Eyebrow>03 / Capabilities</Eyebrow>
       <h2 className="mt-3 max-w-2xl text-balance text-3xl font-semibold tracking-tight md:text-4xl">
         少写样板，保留该写的业务
       </h2>
@@ -56,6 +56,6 @@ export function Features() {
           </article>
         ))}
       </div>
-    </section>
+    </Section>
   );
 }
