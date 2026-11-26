@@ -1,10 +1,5 @@
-import { Download, Github } from "lucide-react";
-
-const REPO_URL = "https://github.com/sword-demon/gorm-generate";
-const RELEASES_URL = `${REPO_URL}/releases/latest`;
-
-const ctaClass =
-  "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-brand px-5 text-sm font-semibold text-brand-ink transition-colors motion-reduce:transition-none hover:bg-brand/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-foreground";
+import { ProjectCtas } from "./ProjectCtas";
+import { Eyebrow } from "./Section";
 
 const chips = [
   "MySQL / PostgreSQL",
@@ -20,9 +15,7 @@ export function Hero() {
         aria-hidden
         className="pointer-events-none absolute -top-20 right-0 -z-10 size-72 rounded-full bg-brand/10 blur-3xl"
       />
-      <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-fd-foreground/60">
-        Tauri 2 · Rust core · 100% local
-      </p>
+      <Eyebrow>Tauri 2 · Rust core · 100% local</Eyebrow>
       <h1 className="mt-5 max-w-3xl text-balance text-4xl font-semibold leading-[1.12] tracking-tight md:text-6xl">
         把建表语句，
         <br className="hidden sm:block" />
@@ -51,23 +44,7 @@ export function Hero() {
         ))}
       </ul>
       <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-        <a
-          className={ctaClass}
-          href={RELEASES_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Download className="size-4" aria-hidden />
-          下载 macOS 版
-        </a>
-        <a
-          className={ctaClass}
-          href={REPO_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Github className="size-4" aria-hidden />在 GitHub 查看
-        </a>
+        <ProjectCtas />
       </div>
       <p className="mt-3 font-mono text-xs text-fd-foreground/60">
         Apple Silicon 与 Intel 各有安装包 · 未签名，首次打开需手动放行

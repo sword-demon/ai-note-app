@@ -7,6 +7,7 @@ import {
   CodeBlockTabsTrigger,
 } from "fumadocs-ui/components/codeblock";
 import { DEMO_CONFIG, DEMO_FILES, DEMO_SQL } from "../data/demo";
+import { Eyebrow, Section } from "./Section";
 
 const panelHeight = "h-[320px] max-h-[320px] lg:h-[460px] lg:max-h-[460px]";
 
@@ -19,21 +20,21 @@ const configItems = [
 ];
 
 export async function DemoSection() {
-  const sqlNode = await highlight(DEMO_SQL, { lang: "sql" });
-  const fileNodes = await Promise.all(
-    DEMO_FILES.map(async (file) => ({
-      ...file,
-      node: await highlight(file.lines.join("\n"), { lang: file.language }),
-    })),
-  );
+  const [sqlNode, fileNodes] = await Promise.all([
+    highlight(DEMO_SQL, { lang: "sql" }),
+    Promise.all(
+      DEMO_FILES.map(async (file) => ({
+        ...file,
+        node: await highlight(file.lines.join("\n"), { lang: file.language }),
+      })),
+    ),
+  ]);
 
   return (
-    <section className="border-t border-fd-border py-14 md:py-20">
+    <Section>
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-fd-foreground/60">
-            01 / Demo
-          </p>
+          <Eyebrow>01 / Demo</Eyebrow>
           <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight md:text-4xl">
             左边是输入，右边是结果
           </h2>
@@ -108,6 +109,6 @@ export async function DemoSection() {
       <p className="mt-4 font-mono text-[11px] text-fd-foreground/70">
         示例逐字取自仓库 fixture；缓存层仅在开关打开时生成。
       </p>
-    </section>
+    </Section>
   );
 }
