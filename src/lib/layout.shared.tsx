@@ -1,5 +1,5 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
-import { BookAIcon, NewspaperIcon } from "lucide-react";
+import { BookAIcon, FolderGit2, NewspaperIcon } from "lucide-react";
 
 export const linkItems = [
   {
@@ -12,6 +12,12 @@ export const linkItems = [
     icon: <NewspaperIcon />,
     text: "HN 2025",
     url: "/news",
+    active: "nested-url" as const,
+  },
+  {
+    icon: <FolderGit2 />,
+    text: "Projects",
+    url: "/projects/gorm-generate",
     active: "nested-url" as const,
   },
 ];
