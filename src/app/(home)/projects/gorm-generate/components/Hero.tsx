@@ -4,7 +4,7 @@ const REPO_URL = "https://github.com/sword-demon/gorm-generate";
 const RELEASES_URL = `${REPO_URL}/releases/latest`;
 
 const ctaClass =
-  "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-brand px-5 text-sm font-semibold text-brand-ink transition-colors hover:bg-brand/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-foreground";
+  "inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-brand px-5 text-sm font-semibold text-brand-ink transition-colors motion-reduce:transition-none hover:bg-brand/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-foreground";
 
 const chips = [
   "MySQL / PostgreSQL",
@@ -37,7 +37,8 @@ export function Hero() {
       </h1>
       <p className="mt-6 max-w-xl text-[15px] leading-8 text-fd-foreground/75">
         粘贴 MySQL 或 PostgreSQL 的 DDL，离线生成 model、repository、service
-        与可选的 Redis 缓存。不连数据库，不发网络请求；相同输入得到字节级相同的输出。
+        与可选的 Redis
+        缓存。不连数据库，不发网络请求；相同输入得到字节级相同的输出。
       </p>
       <ul className="mt-7 flex flex-wrap gap-2 font-mono text-[11px] tracking-wide">
         {chips.map((chip) => (
@@ -65,8 +66,7 @@ export function Hero() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Github className="size-4" aria-hidden />
-          在 GitHub 查看
+          <Github className="size-4" aria-hidden />在 GitHub 查看
         </a>
       </div>
       <p className="mt-3 font-mono text-xs text-fd-foreground/60">

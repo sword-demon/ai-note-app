@@ -17,6 +17,9 @@
 }
 
 .dark {
+  color-scheme: dark;
+  scrollbar-color: #57534e #1c1917;
+
   --color-landing-foreground: #e4e2d0;
   --color-landing-foreground-200: #b7af7e;
 
@@ -79,6 +82,18 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a29e;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1c1917;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #44403c;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #57534e;
 }
 
 /* 图片预览动画 */

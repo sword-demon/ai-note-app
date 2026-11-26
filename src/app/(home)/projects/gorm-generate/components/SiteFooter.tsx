@@ -8,7 +8,7 @@ export function SiteFooter() {
           gorm-generate · only macOS
         </p>
         <a
-          className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-foreground"
+          className="underline decoration-fd-border underline-offset-4 transition-colors motion-reduce:transition-none hover:text-fd-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-foreground"
           href={REPO_URL}
           target="_blank"
           rel="noopener noreferrer"
