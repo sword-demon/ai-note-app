@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { DownloadSection } from "./components/DownloadSection";
+import { Features } from "./components/Features";
 import { Hero } from "./components/Hero";
+import { Limits } from "./components/Limits";
+import { Pipeline } from "./components/Pipeline";
 import { SiteFooter } from "./components/SiteFooter";
 
 export const metadata: Metadata = {
@@ -14,6 +17,9 @@ export default function Page() {
     <div lang="zh-CN" className="flex flex-1 flex-col">
       <div className="mx-auto w-full max-w-page px-4 pb-16">
         <Hero />
+        <Pipeline />
+        <Features />
+        <Limits />
         <DownloadSection />
       </div>
       <SiteFooter />
